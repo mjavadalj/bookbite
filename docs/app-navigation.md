@@ -2,276 +2,133 @@
 
 ## Purpose
 
-This document defines the global navigation structure of BookBite and describes how users move between the main areas of the app.
+This document defines BookBite's MVP-wide navigation: main destinations, global Capture Bite behavior, cross-feature routes, back behavior, and restoration.
 
-The goal is to keep the app simple, predictable, and fast to navigate while supporting both discovery and personal reading workflows.
+Feature specifications own their internal screens, parameters, states, and edge cases.
 
----
+## Principles
 
-## Navigation Principles
+Navigation must be simple, predictable, offline-capable, accessible, and natural in English LTR and Persian RTL.
 
-* The app should feel simple and immediate.
-* The user should always know where they are.
-* Core reading actions should be reachable with minimal friction.
-* Capture Bite is a universal action and should be accessible from anywhere.
-* Reading Session should be the main working space during active reading.
-* Discover and personal reading areas should remain clearly separated.
+The reader must always know:
 
----
+- where they are;
+- how to return;
+- whether an action succeeded or changed context.
 
-## Primary Navigation Structure
+## Launch
 
-BookBite should use a small set of main destinations.
+Reading Session is the default launch destination.
 
-### Main Destinations
+On launch:
 
-1. **Library**
-2. **Discover**
-3. **Reading Session**
-4. **Profile**
+- resume an active ReadingSession when one exists;
+- otherwise show the Reading Session root with Capture Bite as the primary action;
+- never require a PersonalBook or ReadingSession before capture.
+
+Returning from the background preserves the current context. An explicit valid route may open its target directly.
+
+## Main Destinations
+
+The MVP has five main destinations:
+
+1. **Reading Session**
+2. **Library**
+3. **Discover**
+4. **Journey**
 5. **Settings**
 
-### Global Action
+| Destination | Owns |
+|---|---|
+| Reading Session | Quick Capture, start/resume/end session, FocusMode, session Bites |
+| Library | Active PersonalBooks, PersonalBook details, related cycles, sessions, and Bites |
+| Discover | Catalog search, CatalogBook overview, import, and manual PersonalBook creation |
+| Journey | Private ReadingJourney, cycles, sessions, Bites, milestones, achievements, and ranks |
+| Settings | Language, appearance, reduced motion, local OCR, and general app preferences |
 
-* **Capture Bite**
-  A universal action available from all major screens.
+Switching destinations preserves their current navigation stacks. Selecting the active destination again returns to its root.
 
----
+The MVP has no Profile, account, synchronization, cloud OCR, public identity, social, or deep-analytics destination.
 
-## Main Areas
+## Capture Bite
 
-### 1. Library
+Capture Bite is available from every destination and child route. It is most prominent on Reading Session, whether or not a session is active.
 
-The Library is the user's personal reading space.
+Capture opens above the current context without replacing its navigation stack.
 
-It represents the reader's relationship with books and should feel like a personal place that grows over time.
+After the source image is durably saved, the user may:
 
-The Library is not only a collection of books. It is a visual representation of the user's reading journey.
+- return to the previous context while OCR continues; or
+- open Bite detail to review processing state or edit available text.
 
-It should create a feeling of:
+Navigation must support assigned and unassigned Bites. Assignment rules belong to the Bite feature specification.
 
-- Ownership
-- Progress
-- Personal growth
-- Emotional connection with books
-
-It may include:
-
-- Personal books
-- Reading progress
-- Current reading activity
-- Reading milestones
-- Lightweight gamification elements
-- Achievements and rewards connected to the user's journey
-
-The Library is designed to make users feel:
-"This is my reading world."
-
----
-
-### 2. Discover
-
-Discover is the catalog browsing area.
-
-It should allow the user to:
-
-* Search books
-* Browse catalog results
-* Open a book overview
-* Add a book to the personal library
-
-Discover is for finding books, not for managing the personal reading journey.
-
----
-
-### 3. Reading Session
-
-Reading Session is the active reading workspace.
-
-It should support:
-
-* Starting a reading session
-* Enabling Focus Mode
-* Capturing Bites while reading
-* Seeing session-related captures
-* Ending the session
-
-Reading Session is the most important active workspace during reading.
-
----
-
-### 4. Profile
-
-Profile represents the user's reading identity.
-
-Unlike Library, which is a personal reading space, Profile is a user identity page that can eventually be shared with others.
-
-It should feel similar to a personal social profile, but focused on books rather than social engagement.
-
-It may include:
-
-- User information
-- Reading statistics
-- Reading journey summary
-- Ranks
-- Achievements
-- Favorite books
-- Reading patterns
-- Public-facing reading identity
-
-Profile answers:
-
-"Who is this reader?"
-
-### 5. Settings
-
-Settings should contain:
-
-* Language
-* OCR preferences
-* Sync preferences
-* Appearance preferences
-* General app settings
-
-Settings should remain lightweight and easy to reach.
-
----
-
-## Screen Types
-
-BookBite has two different contexts for books.
-
-### 1. Book Overview
-
-Book Overview is the catalog-facing view.
-
-It is reached from Discover and should show:
-
-* Book cover
-* Title
-* Author
-* Description
-* Metadata
-* Catalog-based information
-* Add to Library action
-* Start Reading action
-
-This screen helps the user decide whether they want to read the book.
-
----
-
-### 2. My Book
-
-My Book is the personal book view.
-
-It is reached from Library and should show:
-
-* Reading status
-* Reading cycles
-* Reading sessions
-* Bites
-* Notes
-* Personal progress
-* Continue Reading action
-
-This screen reflects the user's personal relationship with the book.
-
----
-
-## Reading Session Flow
-
-A reading session should be treated as a focused working state.
-
-Typical flow:
-
-1. User opens a book from Library.
-2. User starts a Reading Session.
-3. User optionally enables Focus Mode.
-4. User captures Bites during the session.
-5. User reviews captured Bites during or after the session.
-6. User ends the session.
-7. Session data remains available in the book and profile contexts.
-
-Capture Bite should always remain available globally, but it should feel most prominent inside Reading Session.
-
----
-
-## Capture Bite Flow
-
-Capture Bite is not a page.
-
-It is a global action.
-
-It should be accessible from:
-
-* Library
-* Discover
-* Book Overview
-* My Book
-* Reading Session
-* Profile
-
-However, the primary and most natural place for it is inside Reading Session.
-
----
-
-## Navigation Map
+## Cross-Feature Routes
 
 ```text
-Library
-├── Personal Shelves
-├── Current Reading
-├── Completed Books
-├── Reading Progress
-├── Achievements
-└── My Book
-│   ├── Reading Cycles
-│   ├── Reading Sessions
-│   ├── Bites
-│   └── Continue Reading
-│
-Discover
-├── Search
-├── Book Overview
-└── Add to Library
-│
 Reading Session
-├── Focus Mode
-├── Capture Bite
-├── Session Bites
-└── End Session
-│
-Profile
-├── Reading Journey
-├── Achievements
-├── Statistics
-├── Reading Identity
-├── Statistics
-├── Ranks
-├── Achievements
-├── Favorite Books
-├── Public Profile (Future)
-└── Personal Summary
-│
+├── Capture Bite ──> Bite Detail
+├── Start / Resume ──> Active Session
+└── Active Session ──> FocusMode / Session Bites / End
+
+Library
+├── Add PersonalBook ──> Discover / Manual Creation
+└── PersonalBook Details ──> ReadingCycle / ReadingSession / Bite Detail
+
+Discover
+├── Catalog Search ──> CatalogBook Overview
+└── Import / Manual Creation ──> PersonalBook Details
+
+Journey
+└── ReadingCycle / ReadingSession / Bite Detail / Progression
+
 Settings
-├── Language
-├── OCR
-├── Sync
-└── Appearance
+└── Local Application Preferences
+
+Any context ──> Capture Bite
 ```
 
----
+After creating or importing a PersonalBook, open its details and update Library.
 
-## Future Expansion
+CatalogBook overview and PersonalBook details must remain distinct: one represents external metadata; the other represents the reader's local relationship with a book.
 
-This navigation structure is intentionally small and clear.
+Ending a ReadingSession returns to the Reading Session root. The completed session remains available in Journey and, when assigned, its PersonalBook.
 
-Future versions may add:
+Discover must offer manual creation when offline or when catalog search fails. Existing PersonalBooks and all other main destinations must remain usable without network access.
 
-* Public profile views
-* Shared reading pages
-* Reading recommendations
-* Community features
-* More detailed journey screens
+## Back and Dismiss
 
-These additions should not break the core simplicity of the current navigation model.
+Back navigation:
+
+1. dismisses the current dialog, sheet, capture surface, or transient editor;
+2. pops the current child route;
+3. remains at the current destination root;
+4. allows the operating system to leave the app from a root destination.
+
+Leaving an incomplete workflow requires confirmation only when unsaved input would be lost. A durably captured Bite is saved even while OCR is pending.
+
+Returning from Bite detail restores its originating context when that context still exists.
+
+## Restoration and Invalid Routes
+
+The app must restore:
+
+- an active or unfinished ReadingSession;
+- an interrupted capture or editor when safe;
+- pending Bite processing state.
+
+If none applies, launch at Reading Session.
+
+When a route references missing, archived, or deleted data, show a localized recovery state and return to the nearest valid destination. Navigation failure must never reset or delete user data.
+
+## Feature-Specification Contract
+
+Each feature specification must define:
+
+- routes it owns and their parameters;
+- entry, exit, and confirmation behavior;
+- empty, loading, error, offline, and restoration states;
+- accessibility, focus, RTL, and reduced-motion behavior;
+- approved links to other features.
+
+Adding a main destination or changing global Capture Bite behavior requires product approval.
