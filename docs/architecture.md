@@ -1,167 +1,151 @@
 # Technical Architecture
 
-**Project Name:** BookBite *(Working Title)*
+## Purpose
 
----
+This document defines BookBite's system structure and data flow. Technology selections are defined in `tech-stack.md`; canonical entities and invariants are defined in `domain-model.md`.
 
-# Architecture Goals
+## Goals
 
-The architecture of BookBite should support:
+The architecture must provide:
 
-- Smooth user experience
-- High performance
-- Offline-first functionality
-- Future scalability
-- Maintainable codebase
-- Addition of new capabilities without major rewrites
+- offline operation from first launch;
+- durable capture without silent data loss;
+- responsive UI during OCR and other background work;
+- clear, testable boundaries;
+- replaceable external and native services;
+- growth without speculative infrastructure or major rewrites.
 
+## Structure
 
-# Technology Direction
+BookBite uses feature-first Clean Architecture. Each feature may contain four layers:
 
-BookBite will use Flutter as the primary application framework.
+### Presentation
 
-Flutter is selected to provide:
+Screens, widgets, navigation state, localization, accessibility semantics, and user feedback.
 
-- Fast UI development
-- Smooth animations
-- Cross-platform capability
-- Consistent user experience
+Presentation depends on application behavior and contains no persistence, OCR, catalog, or domain rules.
 
-Platform-specific native implementations may be used when required for performance-critical features.
+### Application
 
-Examples:
+Use cases, workflow coordination, background-job orchestration, and presentation-facing state.
 
-- Camera processing
-- OCR acceleration
-- Device capabilities
-- Platform-specific integrations
+Application coordinates domain objects and repository interfaces without depending on concrete storage or service implementations.
 
-Native code should remain isolated and accessible through clear interfaces so future changes do not affect the overall architecture.
+### Domain
 
----
+Canonical entities, value objects, policies, and invariants.
 
-# Architectural Principles
+The domain is pure Dart and depends on no Flutter, Riverpod, database, OCR, catalog, or platform framework.
 
-## Clean Architecture
+### Data
 
-The project should follow Clean Architecture principles.
+Repositories and adapters for SQLite, files, OCR, camera, catalog access, and future services.
 
-Responsibilities should be separated between:
+Data implements interfaces required by the application or domain.
 
-- Presentation Layer
-- Domain Layer
-- Data Layer
+Dependency direction is inward:
 
-Business rules should not depend on external frameworks or infrastructure.
+```text
+Presentation -> Application -> Domain
+                     ^
+                     |
+                   Data
+```
 
+## Modules
 
-## SOLID Principles
+MVP modules include:
 
-Code should follow SOLID principles where they improve:
+- Library;
+- Catalog;
+- Bites;
+- OCR;
+- ReadingCycles;
+- ReadingSessions;
+- ReadingJourney;
+- Progression;
+- Settings.
 
-- Maintainability
-- Testability
-- Extensibility
+Modules communicate through application/domain interfaces, not each other's storage models.
 
-SOLID should be applied practically, not as unnecessary complexity.
+## Local Data
 
-## Separation of Concerns
+Local data is the sole MVP source of truth.
 
-Each component should have a clear responsibility.
+- Drift/SQLite stores structured entities, relationships, processing state, and migrations.
+- App-private file storage holds source images.
+- Database records reference files by managed local identifiers or paths.
+- Imported catalog metadata is cached as a local snapshot.
 
-UI components should not contain:
+The app must reconcile incomplete writes and orphaned files. Schema changes require versioned, tested migrations. Corruption or migration failure must produce a recoverable state and must not silently reset user data.
 
-- Business logic
-- Data management
-- External service handling
+Archiving preserves related history. Permanent deletion must be explicit, confirmed, and implemented as a defined cleanup workflow.
 
-## Modularity
+## Capture and OCR Pipeline
 
-Major features should be designed as independent modules.
+Capture is a durable workflow:
 
-Examples:
+1. write the captured image to a temporary app-private location;
+2. create the pending Bite and move the image to its managed location;
+3. complete capture only when both image and Bite record are durable;
+4. enqueue a persistent on-device OCR job;
+5. expose `captured`, `processing`, `ready`, or `failed` state;
+6. store editable text on success;
+7. resume incomplete work or expose retry after restart;
+8. clean up abandoned temporary files safely.
 
-- Library
-- Bites
-- OCR
-- Reading Sessions
-- Authentication
-- Synchronization
+OCR runs outside the UI thread. Its failure must not remove the source image or block unrelated interaction.
 
-Modules should communicate through clear interfaces.
+## Reactive Data Flow
 
+```text
+SQLite/File/Service Adapters
+          -> Repositories
+          -> Application Use Cases
+          -> Riverpod State
+          -> UI
+```
 
-## Data Architecture Principles
+The UI observes local state. Network responses and OCR results update local data first; the UI reacts to those updates.
 
-- Local storage is the primary source of user data during offline usage.
-- Core reading functionality must not depend on network availability.
-- Cloud services, when introduced, should synchronize with local data rather than replace it.
-- Domain models should remain independent from storage technologies.
-- External services should not define core product concepts.
+## External and Native Boundaries
 
-The application should remain functional without network access whenever possible.
+Define replaceable interfaces for:
 
-## Replaceable Services
+- camera capture;
+- OCR;
+- catalog discovery;
+- file storage;
+- IDs and clock;
+- future cloud OCR and synchronization.
 
-External dependencies should be abstracted behind interfaces.
+Catalog results must be validated and mapped before entering the domain. Provider IDs and provenance must be retained. Existing PersonalBooks must never require a live catalog lookup.
 
-Examples:
+Native Android/iOS implementations must remain isolated behind Dart interfaces.
 
-- OCR provider
-- Book catalog provider
-- Cloud storage provider
-- Authentication provider
+## Privacy and Security
 
-Changing a provider should not require rewriting the application.
+- Store personal data and images only in app-private locations.
+- Do not place OCR text, page images, or sensitive metadata in production logs.
+- Do not include personal content in analytics or crash payloads.
+- Validate image inputs, catalog responses, file references, and database boundaries.
+- Keep secrets out of source code and logs.
+- Do not upload personal content in the MVP.
 
+## Cross-Cutting Completion Rules
 
-# Performance Requirements
+Every feature specification and implementation must define and verify:
 
-Performance is a product requirement.
+- positive, negative, empty, loading, and background states;
+- offline and external-service behavior;
+- recovery and data-preservation behavior;
+- English LTR and Persian RTL;
+- accessibility and reduced motion;
+- measurable interaction, rendering, and processing performance;
+- appropriate unit, widget, integration, migration, and failure tests.
 
-The application should prioritize:
+## Future Services
 
-- Fast startup
-- Immediate UI feedback
-- Smooth animations
-- Responsive interactions
-- Efficient camera experience
+Accounts, cloud backup, synchronization, cloud OCR, analytics, and remote crash reporting are not part of the MVP.
 
-Users should not experience unnecessary delays during normal interactions.
-
-
-# User Experience Requirements
-
-Every feature implementation should include:
-
-- Loading states
-- Empty states
-- Error handling
-- Offline behavior
-- User feedback
-
-A technically working feature is not complete until the user experience is complete.
-
-# Localization
-
-The application supports Persian and English.
-
-All user-facing strings must be externalized through localization files.
-
-No hardcoded user-facing text is allowed.
-
-# Development Practices
-
-All generated code should:
-
-- Follow the existing architecture
-- Respect project conventions
-- Avoid unnecessary dependencies
-- Prefer maintainable solutions over shortcuts
-
-Before implementing a new feature, developers should review:
-
-- vision.md
-- constitution.md
-- mvp-scope.md
-- domain-model.md
+Future implementations must use optional adapters, preserve local ownership, obtain appropriate user consent, and avoid changing the core domain.

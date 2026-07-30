@@ -2,214 +2,107 @@
 
 ## Purpose
 
-This document defines the global visual language, interaction principles, and user experience guidelines for BookBite.
+This document defines BookBite's product-wide interaction and presentation rules. Feature specifications provide feature-specific layouts, components, tokens, and measurable performance budgets.
 
-Every screen, feature, and component should follow these principles to provide a consistent experience throughout the application.
+## Experience
 
----
+BookBite must feel calm, personal, warm, minimal, and trustworthy. It is a reading companion, not a productivity dashboard or social feed.
 
-# Brand Personality
+Every screen should:
 
-BookBite should feel:
+- prioritize the reader's current task;
+- minimize cognitive load and visual noise;
+- provide clear hierarchy and navigation;
+- respond immediately to input;
+- preserve access to local content during background work or network failure.
 
-- Calm
-- Personal
-- Warm
-- Friendly
-- Minimal
-- Thoughtful
-- Trustworthy
+## Interaction Feedback
 
-BookBite is a reading companion—not a productivity tool or a social media application.
+Users must always know whether an action succeeded, is processing, failed, or can be retried.
 
----
+For Bite capture:
 
-# Product Feeling
+1. confirm when the page image is durably saved;
+2. allow reading to continue while OCR runs;
+3. expose `processing`, `ready`, and recoverable `failed` states;
+4. never imply that a pending Bite was lost.
 
-The application should feel like:
+Optimistic feedback may be used only when failure can be recovered without losing user data.
 
-- A personal reading companion
-- A beautiful private library
-- A place to preserve meaningful moments from books
+## Standard States
 
-Users should gradually develop a sense of ownership and emotional connection with their library.
+Every feature must define:
 
----
+- initial and populated states;
+- empty state with a meaningful next action;
+- background-processing state;
+- recoverable error state;
+- offline behavior;
+- unavailable external-service behavior;
+- missing or deleted local-asset behavior.
 
-# Experience Principles
+Local content should remain visible during refresh. Full-screen blocking indicators should be reserved for actions that cannot safely continue.
 
-Every experience should be:
+## Visual System
 
-- Reader-first
-- Frictionless
-- Fast
-- Calm
-- Predictable
-- Personal
+Interfaces must use shared tokens for:
 
-Technology should quietly support reading instead of becoming the center of attention.
+- color and semantic states;
+- typography;
+- spacing;
+- shape;
+- elevation;
+- motion.
 
----
+Components must be readable, reusable, accessible, and consistent. New patterns require a demonstrated need and must not duplicate an existing component.
 
-# Interaction Principles
+Exact token values belong to the design-system implementation and must be reused by feature specifications.
 
-Every interaction should feel immediate.
+## Motion
 
-The interface should never make users question whether an action was successful.
+Motion must be purposeful, brief, and non-blocking. It may explain spatial change or confirm an action; it must not be decorative distraction.
 
-Important interactions should require as little effort as possible.
+Reduced-motion settings must be respected. No action or meaning may depend on an animation completing.
 
-Capturing a Bite should always be faster than writing a manual note.
+## Accessibility
 
----
+All experiences must:
 
-# Visual Principles
+- provide correct screen-reader names, roles, states, and focus order;
+- support dynamic text without hiding essential content or actions;
+- meet WCAG 2.2 AA contrast expectations;
+- meet platform minimum touch-target guidance;
+- provide non-visual alternatives to covers, spines, decorations, color, and motion;
+- remain operable with reduced motion enabled.
 
-The interface should prioritize:
+Accessibility is a completion criterion, not optional polish.
 
-- Simplicity
-- Spacious layouts
-- Strong visual hierarchy
-- Comfortable reading
-- Low cognitive load
+## Localization and Direction
 
-Visual noise should be minimized.
+English LTR and Persian RTL are first-class.
 
----
+All user-facing strings must be localized. Layout, navigation direction, alignment, icons, focus order, truncation, and mixed-direction text must behave naturally in both languages.
 
-# Motion Principles
+Physical metaphors such as bookshelves and book spines must remain readable and usable in Persian, with large text, and through assistive technology.
 
-Motion should feel:
+## Calm Progression
 
-- Smooth
-- Calm
-- Purposeful
-- Natural
+Achievements, milestones, and ranks must support reflection without competing with books.
 
-Animations should explain interface changes rather than attract attention.
+Do not use:
 
-Avoid decorative animations without functional value.
+- leaderboards or competitive comparison;
+- streak-loss pressure;
+- shame or urgency;
+- reward-first navigation;
+- attention-seeking celebration.
 
----
+## Feature-Specification Requirements
 
-# Performance Perception
+Each feature specification must define:
 
-The application should feel responsive at all times.
-
-Whenever possible:
-
-- Avoid blocking the interface.
-- Prefer optimistic interactions.
-- Prefer skeleton loading over loading spinners.
-- Minimize visible waiting.
-
-Users should feel that the application reacts immediately.
-
----
-
-# Navigation Principles
-
-Navigation should be:
-
-- Simple
-- Predictable
-- Easy to learn
-
-Users should always understand:
-
-- Where they are
-- How to go back
-- What happens next
-
----
-
-# Component Philosophy
-
-Components should prioritize:
-
-- Readability
-- Consistency
-- Accessibility
-- Reusability
-
-New components should extend the existing system rather than introduce new patterns.
-
----
-
-# Empty States
-
-Empty states should encourage reading.
-
-They should never make the application feel unfinished.
-
-Whenever appropriate, they should gently guide users toward their next meaningful action.
-
----
-
-# Loading States
-
-Loading experiences should feel lightweight.
-
-Prefer:
-
-- Skeleton loading
-- Progressive loading
-- Immediate feedback
-
-Avoid unnecessary full-screen loading indicators.
-
----
-
-# Error States
-
-Errors should be:
-
-- Human
-- Calm
-- Helpful
-
-Whenever possible, offer a clear recovery path instead of only describing the problem.
-
----
-
-# Accessibility
-
-BookBite should remain comfortable for long reading sessions.
-
-The design system should support:
-
-- Comfortable touch targets
-- Dynamic text sizes
-- High contrast where appropriate
-- Screen readers
-
-Accessibility is considered part of the product quality.
-
----
-
-# Localization
-
-The entire design system must fully support:
-
-- English (LTR)
-- Persian (RTL)
-
-Layouts should feel native in both directions.
-
-Localization should never appear as an afterthought.
-
----
-
-# Future Expansion
-
-Future additions may include:
-
-- Color system
-- Typography scale
-- Iconography
-- Illustration style
-- Design tokens
-- Component library
-- Motion specifications
-- Haptic feedback
-- Sound design
+- its states and recovery paths;
+- accessibility and RTL behavior;
+- reduced-motion behavior;
+- required design tokens and components;
+- measurable interaction, rendering, and animation performance criteria.

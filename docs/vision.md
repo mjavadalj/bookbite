@@ -1,86 +1,57 @@
 # Product Vision
 
-**Project Name:** BookBite *(Working Title)*
+## Purpose
 
----
+BookBite helps readers preserve meaningful passages and ideas from physical books without interrupting the reading experience.
 
-# Vision Statement
+Reading often produces moments worth remembering, but writing by hand or switching to a generic notes app breaks immersion. BookBite removes that friction: the reader photographs a page, the app saves it locally, extracts text on-device, and creates an editable Bite that can be reviewed later.
 
-BookBite helps readers preserve what matters from the books they read without interrupting the reading experience.
+## Audience
 
-By making note-taking feel effortless and natural, BookBite allows readers to capture meaningful passages, ideas, and memories while staying immersed in the world of the book.
+BookBite is primarily for passionate and casual physical-book readers who value books as personal experiences and want a lasting record of what they read.
 
-Over time, these moments become a personal reading archive that reflects the reader's unique journey through books.
+Students, researchers, and knowledge-focused readers may also benefit, but academic knowledge-management workflows are not the product's primary focus.
 
-# Problem Statement
+## Product Promise
 
-Reading often creates meaningful moments that readers want to remember.
+BookBite must make capturing a meaningful reading moment faster and less disruptive than recording it manually.
 
-Unfortunately, traditional note-taking interrupts the flow of reading. Writing by hand or switching to another application pulls readers out of the experience, causing many valuable thoughts and passages to be lost.
+Over time, PersonalBooks, ReadingCycles, ReadingSessions, and Bites form a private ReadingJourney that reflects the reader's relationship with books.
 
-BookBite removes this friction by making it easy to capture meaningful parts of a book in seconds and organize them later.
+## Experience
 
+BookBite should feel:
 
-# Target Users
+- calm;
+- personal;
+- welcoming;
+- focused;
+- fast;
+- trustworthy.
 
-## Primary Users
+Technology should support reading quietly. It must not become the center of the experience.
 
-BookBite is designed for people who love reading books and want to preserve meaningful parts of their reading experience.
+## Product Boundaries
 
-This includes:
+BookBite is:
 
-- Passionate readers
-- Casual readers
-- People who enjoy building a personal library of books they have read
+- a companion for physical-book reading;
+- an offline-first personal library;
+- a tool for capturing editable Bites;
+- a private record of a reader's journey.
 
-These users value books as personal experiences, not only as sources of information.
+BookBite is not:
 
-## Secondary Users
+- an ebook reader;
+- a generic note-taking application;
+- an AI summarizer;
+- a social platform;
+- an engagement-maximization product.
 
-Students, researchers, and knowledge-focused readers may also benefit from BookBite, although academic workflows are not the primary focus of the product.
+## Evolution
 
-# Core Value Proposition
+The product may later add optional cloud OCR, backup, synchronization, and social capabilities. These additions must preserve local ownership, the calm experience, and the ability to complete the core reading workflow without network access.
 
-BookBite removes the friction between reading and note-taking.
+Every future decision must reinforce one idea:
 
-Readers can quickly capture important passages while reading, continue their reading without interruption, and return later to review, edit, and organize their notes.
-
-The application helps preserve the reading experience rather than compete with it.
-
-# Product Experience Philosophy
-
-BookBite should feel like a calm, personal reading companion.
-
-BookBite should feel like owning a personal library that grows with every book you read.
-
-It is not simply a place to store text; it is a place where readers build a meaningful record of their relationship with books.
-
-Every captured note becomes another memory preserved, another step in your personal reading journey.
-
-The experience should feel:
-
-- Personal
-- Calm
-- Welcoming
-- Focused
-- Emotionally connected to reading
-
-Every interaction should reduce friction, Technology should quietly support the reader without becoming the center of attention.
-
-# Future Vision
-
-BookBite is designed to grow alongside its readers.
-
-What begins as a simple way to capture notes during reading can gradually evolve into a richer reading companion—helping readers reflect on their books, preserve their reading journey, and, when they choose, connect with others who share the same passion for books.
-
-As the product evolves, every new capability should strengthen the relationship between readers and books while preserving the calm, personal experience that defines BookBite.
-
-# Product Identity
-
-BookBite is a reading companion centered around effortless book note-taking.
-
-OCR, AI, cloud synchronization, and future social features exist to support the reader's relationship with books—not to replace or distract from it.
-
-Every product decision should reinforce one central idea:
-
-> **Help people preserve what matters from the books they read without taking them out of the world they are immersed in.**
+> Help readers preserve what matters without pulling them out of the book they are reading.

@@ -1,201 +1,171 @@
-# BookBite Domain Model
+# Domain Model
 
-**Project Name:** BookBite *(Working Title)*
+## Purpose
 
----
+This document defines BookBite's canonical concepts, relationships, and invariants. Storage and UI models must adapt to this domain rather than redefine it.
 
-# Purpose
+## CatalogBook
 
-This document defines the core concepts and terminology used throughout BookBite.
+A `CatalogBook` is metadata returned by an external book-catalog provider.
 
-These definitions create a shared language between product, design, and engineering.
+Required identity:
 
+- provider;
+- provider-specific book or edition ID.
 
-# Core Concepts
+It may include title, authors, edition, language, identifiers, description, and cover references.
 
-## Book
+A CatalogBook is external data. It never owns reading status, Bites, or ReadingJourney history.
 
-A Book represents a physical book that the user owns, reads, or wants to read.
+## PersonalBook
 
-A Book contains information such as:
+A `PersonalBook` is the reader-owned local record for one edition or title.
 
-- Title
-- Author
-- Cover image
-- Metadata
-- Reading status
-- Associated Bites
-- Reading Journey
+It has:
 
-A Book can exist in the user's personal library independently from the global book catalog.
+- a stable local ID;
+- a required title;
+- local metadata and timestamps;
+- an optional link to a CatalogBook;
+- an optional archive timestamp.
 
+A PersonalBook may be created manually and remain independent of every catalog. Imported catalog metadata is stored as a local snapshot so the PersonalBook remains usable offline.
+
+Importing the same provider edition must resolve to the existing PersonalBook. A different edition or translation may create a separate PersonalBook.
+
+Archiving removes a PersonalBook from the active Library without deleting its history. Permanent deletion is a separate confirmed operation whose feature specification must state every related record and file it removes.
 
 ## Library
 
-A Library represents the user's personal collection of books inside BookBite.
+The `Library` is the reader's collection of active PersonalBooks. Archived PersonalBooks remain part of the reader's stored history but are not active Library entries.
 
-It contains books that the user:
+## ReadingCycle
 
-- Wants to read
-- Is currently reading
-- Has finished
-- Has paused
-- Has dropped
+A `ReadingCycle` is one attempt to read a PersonalBook.
 
-The Library represents the user's personal relationship with books.
+It has:
 
-## Reading Cycle
+- a stable local ID;
+- one PersonalBook;
+- a start date;
+- an optional end date;
+- a status;
+- timestamps.
 
-A Reading Cycle represents one attempt of reading a specific book.
+Allowed statuses:
 
-The same book may have multiple Reading Cycles.
+- `reading`;
+- `paused`;
+- `finished`;
+- `dropped`.
 
-Example:
+Rereading the same PersonalBook creates another ReadingCycle.
 
-A user reads "The Hobbit" in 2026 and finishes it.
+The PersonalBook's displayed status is derived from its most recent ReadingCycle:
 
-Later, the user starts reading it again in 2028.
+- no cycle: `wantToRead`;
+- otherwise: the most recent cycle's status.
 
-These are two separate Reading Cycles.
+## ReadingSession
 
-A Reading Cycle contains:
+A `ReadingSession` is a timed period of reading activity.
 
-- Start date
-- End date
-- Reading status
-- Related Reading Sessions
-- Related Bites
+It has:
 
+- a stable local ID;
+- a start time;
+- an optional end time;
+- a derived duration;
+- timestamps;
+- an optional PersonalBook and ReadingCycle assignment.
 
-## Reading Session
+A session may be captured without choosing a book and assigned later. When assigned to a ReadingCycle, its PersonalBook is derived from that cycle.
 
-A Reading Session represents a focused period of reading activity.
-
-A Reading Session may be started manually through Focus Reading Mode.
-
-A session can contain:
-
-- Start time
-- End time
-- Duration
-- Related Reading Cycle
-
-Reading Sessions are designed to help users build awareness of their reading journey.
-
+`FocusMode` is optional distraction-reduced presentation during an active ReadingSession. It is not a separate domain entity.
 
 ## Bite
 
-A Bite is the core captured unit of BookBite.
+A `Bite` is the canonical captured unit: a meaningful passage or idea preserved from a physical book.
 
-A Bite represents a meaningful part of a physical book that a user wants to preserve.
+It has:
 
-A Bite is created when:
+- a stable local ID;
+- a source-image reference while the image is retained;
+- editable OCR text when available;
+- an OCR status;
+- creation and update timestamps;
+- optional ReadingSession, PersonalBook, and ReadingCycle assignments.
 
-1. The user captures a page using the camera.
-2. The application extracts text using OCR.
-3. The captured content is saved.
+Allowed OCR statuses:
 
-A Bite may contain:
+- `captured`: the source image is durable and awaits processing;
+- `processing`: on-device OCR is running;
+- `ready`: editable text is available;
+- `failed`: processing failed and may be retried.
 
-- Extracted text
-- Original captured image
-- User edits
-- Creation date
-- Related Book (optional)
-- Related Reading Cycle (optional)
-- Optional Reading Session reference
+A Bite may remain unassigned. This is a state of Bite, not a separate entity.
 
-A Bite can exist without being immediately connected to a book.
-Users may organize and assign captured Bites later.
+A Bite linked to a ReadingSession inherits that session's PersonalBook and ReadingCycle assignment by default. The user may explicitly detach or reassign it.
 
-A Bite is not simply a note.
+The source image is retained locally until the user deletes it. Deleting the image must not delete the Bite's editable text.
 
-It represents a preserved moment from the user's relationship with a book.
+## ReadingJourney
 
-## Unassigned Bite
+`ReadingJourney` is a derived view of the reader's accumulated history:
 
-An Unassigned Bite is a captured Bite that has not yet been connected to a specific Book or Reading Cycle.
+- PersonalBooks;
+- ReadingCycles;
+- ReadingSessions;
+- Bites;
+- milestones;
+- achievements;
+- ranks.
 
-This allows users to quickly capture meaningful content without interrupting their reading flow.
+It supports reflection and personal growth, not competition.
 
-Users can organize and connect these Bites later.
+## Milestone, Achievement, and Rank
 
-## OCR Capture
+- A `Milestone` marks meaningful reading progress.
+- An `Achievement` recognizes a predefined reading event.
+- A `Rank` represents predefined, lightweight progression.
 
-OCR Capture represents the process of converting a photographed book page into editable text.
+These concepts must remain minimal, extensible, calm, and non-competitive.
 
-OCR Capture may use:
+## Relationships
 
-- Local processing
-- Cloud processing
+```text
+Library
+└── PersonalBook ── optional link ──> CatalogBook
+    └── ReadingCycle
+        ├── ReadingSession
+        └── Bite
 
-The implementation should remain invisible to the reader whenever possible.
+ReadingSession ── optional assignment ──> ReadingCycle
+Bite ── optional assignment ──> ReadingSession / ReadingCycle / PersonalBook
+```
 
+Assignments may be absent and added later. References must use stable local IDs.
 
-## Reading Journey
+## Invariants
 
-Reading Journey represents the user's accumulated history with books.
+- Catalog data never owns personal data.
+- Core records use stable local IDs before any network operation.
+- Domain entities do not depend on storage, UI, OCR, or catalog frameworks.
+- A ReadingCycle belongs to exactly one PersonalBook.
+- A ReadingSession assigned to a ReadingCycle derives the same PersonalBook.
+- A session-linked Bite inherits the session assignment unless explicitly overridden.
+- Interrupted OCR must resume or enter a recoverable failed state after restart.
+- Archiving a PersonalBook preserves its ReadingCycles, ReadingSessions, and Bites.
 
-It includes:
+## Terminology
 
-- Books read
-- Reading cycles
-- Sessions
-- Bites captured
-- Milestones achieved
-
-The purpose is reflection and personal growth, not competition.
-
-
-## Reading Rank
-
-Reading Rank represents lightweight progression based on reading activity.
-
-Ranks should celebrate consistency and exploration.
-
-They should never create pressure or turn reading into a game-first experience.
-
-
-## Achievement
-
-An Achievement represents a meaningful reading milestone.
-
-Examples:
-
-- Completing the first book
-- Capturing the first Bite
-- Maintaining a reading habit
-
-Achievements exist to recognize moments in the user's journey.
-
-They should support motivation without distracting from reading.
-
-
-# Relationships
-
-User
- |
- ├── Library
- |     |
- |     └── Book
- |            |
- |            └── Reading Cycle
- |                   |
- |                   ├── Reading Sessions
- |                   |
- |                   └── Bites
- |
- └── Unassigned Bites
-
-
-# Terminology Rules
-
-Use these terms consistently:
-
-| Concept | Use | Avoid |
+| Use | Meaning | Avoid |
 |---|---|---|
-| Bite | Captured book moment | BookNote |
-| Reading Cycle | One attempt of reading a book | Reading History |
-| Reading Session | One focused reading period | Reading Time |
-| Library | User's personal collection | Catalog |
-| Book Catalog | External book database | Library |
+| Bite | Captured and editable reading moment | Note, BookNote, Summary |
+| CatalogBook | External provider metadata | LibraryBook |
+| PersonalBook | Reader-owned edition/title record | Catalog entry |
+| ReadingCycle | One attempt to read a PersonalBook | Reading History |
+| ReadingSession | One timed reading period | Reading Time |
+| FocusMode | Optional focused session UI | ReadingSession |
+| Library | Active PersonalBook collection | Catalog |
+| ReadingJourney | Derived personal reading history | Analytics dashboard |

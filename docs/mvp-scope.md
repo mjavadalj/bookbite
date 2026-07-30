@@ -1,198 +1,121 @@
 # MVP Scope
 
-**Project Name:** BookBite *(Working Title)*
+## Goal
 
----
+The MVP validates one promise:
 
-# MVP Goal
+> Readers can preserve meaningful passages and ideas from physical books without interrupting reading.
 
-The purpose of the MVP is to validate BookBite's core promise:
+It must prove that BookBite can become a natural part of reading through fast, reliable, private, and offline-first Bite capture.
 
-> Readers can capture meaningful notes from physical books without interrupting their reading experience.
+## Success Outcomes
 
-The MVP should prove that BookBite makes book note-taking significantly easier than traditional methods while preserving a calm, personal, and enjoyable reading experience.
+The MVP succeeds when readers can:
 
+- discover or manually create a PersonalBook;
+- build and access a local Library;
+- track ReadingCycles and ReadingSessions;
+- capture a page without first selecting a book;
+- receive immediate confirmation that the image is safe;
+- obtain editable Bite text through on-device OCR;
+- review, edit, assign, and retain Bites offline;
+- view a calm ReadingJourney.
 
-# Success Criteria
+Each feature specification must define measurable performance, accessibility, OCR-quality, reliability, and recovery criteria for its part of these outcomes.
 
-The MVP is successful if users can:
+## In Scope
 
-- Discover or create the book they are reading.
-- Build a personal library of books.
-- Track their reading journey.
-- Capture important pages from physical books in seconds.
-- Convert captured pages into editable Book Bites.
-- Continue reading immediately after capturing a note.
-- Review and edit notes later.
-- Continue using the application even without an internet connection.
-
-
-# In Scope
-
-## Personal Library
+### Personal Library
 
 Users can:
 
-- Browse books through an external book catalog.
-- Manually create a book when it is unavailable in the catalog.
-- Build and manage their personal library.
-- View book details.
+- search a free external catalog;
+- import a CatalogBook as a PersonalBook;
+- manually create a PersonalBook when search is unavailable or has no match;
+- access imported metadata offline;
+- archive a PersonalBook without losing history;
+- view personal reading history for a book.
 
-Manual creation only affects the user's personal library and does not modify the global book catalog.
+Open Library is the initial catalog provider and must remain replaceable. Catalog failure must not affect existing PersonalBooks.
 
+### Bite Capture
 
-## Reading Status
+The complete Bite workflow works offline from first launch:
 
-Each book can have one of the following states:
+1. capture a physical-book page;
+2. save the source image durably;
+3. create a Bite with `captured` status;
+4. run free on-device OCR;
+5. save editable text or expose a recoverable failure;
+6. retain the source image until the user deletes it;
+7. assign the Bite now or later.
 
-- Want to Read
-- Reading
-- Paused
-- Finished
-- Dropped
+OCR may continue after capture. The user must be free to resume reading as soon as the image is safe.
 
-The application should support multiple reading cycles for the same book while preserving the user's Reading Journey.
+English OCR is the primary release-quality target. Persian OCR is included as a secondary MVP priority. The OCR feature specification must define the required accuracy, latency, and test corpus.
 
-
-## Book Bite
+### Reading Activity
 
 Users can:
 
-- Capture pages from physical books using the device camera.
-- Convert captured pages into editable text using OCR.
-- Save Bites immediately.
-- Edit Bites at any time.
-- Organize notes within each book.
+- maintain multiple ReadingCycles for a PersonalBook;
+- use the statuses Want to Read, Reading, Paused, Finished, and Dropped;
+- start, end, and later assign ReadingSessions;
+- optionally use FocusMode during a session;
+- capture Bites with or without an active session.
 
-Bites can initially exist without a connected Book or Reading Cycle and can be organized by the user later.
+### ReadingJourney
 
-OCR may be performed locally or through cloud services depending on availability and user preference.
+The MVP includes:
 
-The primary objective is preserving the reader's flow with the least possible friction.
+- ReadingCycles;
+- ReadingSessions;
+- Bites;
+- a minimal predefined set of milestones, achievements, and ranks.
 
+Progression must remain calm, non-competitive, and secondary to books.
 
-## Focus Reading Sessions
+### Localization and Accessibility
 
-Users may optionally start a Focus Reading Session before reading.
+The MVP supports English LTR and Persian RTL. Core workflows must support screen readers, dynamic text, accessible contrast and touch targets, correct focus order, and reduced motion.
 
-Focus Sessions provide:
+## Offline and Network Boundaries
 
-- A calm, distraction-reduced reading experience.
-- Reading session tracking.
-- Reading Session records.
-- The foundation of the user's reading journey.
+Local data is the only MVP source of truth.
 
-BookBite capture must always remain available, even when Focus Mode is not active.
+Network access is used only for external book discovery. Manual creation is the complete fallback. Existing PersonalBooks, ReadingJourney data, and Bite capture must never require the catalog or internet.
 
+The MVP has no account, backend, cloud backup, synchronization, cloud OCR, or remote user-data store.
 
-## Reading Journey
+## Out of Scope
 
-The MVP includes lightweight progression that celebrates reading without turning the experience into a game.
+The MVP does not include:
 
-This includes:
+- AI-generated summaries, refinement, or OCR correction;
+- cloud OCR;
+- accounts, cloud backup, or cross-device synchronization;
+- ebook reading;
+- rich-text editing, sticky notes, or highlights;
+- tags, folders, or advanced Bite search;
+- deep reading analytics;
+- personalized recommendations;
+- reviews or ratings;
+- public profiles, following, comments, clubs, or community features;
+- multi-device real-time collaboration.
 
-- Reading Journey
-- Reading sessions
-- Reading milestones
-- Reading ranks
-- Simple achievements
+These capabilities require separate post-MVP decisions and specifications.
 
-Progression should encourage consistent reading while keeping books—not rewards—at the center of the experience.
+## Constraints
 
+Every MVP feature must:
 
-## Offline Experience
+- support the core reading workflow;
+- minimize interruption;
+- preserve local ownership;
+- remain useful offline;
+- provide immediate feedback;
+- recover without silent data loss;
+- support English and Persian;
+- meet feature-specific performance and quality criteria.
 
-Once a book has been added to the user's library, the core reading workflow should work completely offline.
-
-Users should be able to:
-
-- Access their personal library.
-- Read previously added books.
-- Capture Bites.
-- Edit Bites.
-- Continue Focus Sessions.
-- View Reading Journey.
-
-Internet access is required only for features that depend on external services, such as:
-
-- Book discovery
-- Account synchronization
-- Cloud OCR (if selected)
-- Future social features
-
-## Account & Synchronization
-
-Creating an account is optional.
-
-Users can start using BookBite immediately without registration.
-
-Creating an account enables:
-
-- Cloud backup
-- Synchronization across devices
-- Future social capabilities
-
-Local data always remains the primary source of truth.
-
-
-## Localization
-
-The MVP supports:
-
-- English
-- Persian (RTL)
-
-The application architecture should allow additional languages to be added with minimal effort.
-
-
-# Out of Scope
-
-The MVP intentionally does not include:
-
-- AI-generated summaries
-- AI note refinement
-- AI OCR correction
-- Rich text editing
-- Sticky notes
-- Highlights
-- Tags and folders
-- Advanced search inside notes
-- Reading analytics and deep statistics
-- Personalized recommendations
-- Reviews and ratings
-- Public profiles
-- Following other readers
-- Comments
-- Community features
-- Reading clubs
-- Multi-device real-time collaboration
-
-These capabilities belong to future versions after the core reading workflow has been validated.
-
-
-# Product Constraints
-
-Every feature added to the MVP should support the primary reading workflow.
-
-The MVP should prioritize:
-
-- Minimal friction
-- Offline-first experience
-- Local-first data ownership
-- Fast and responsive interactions
-- Smooth animations
-- Reliable OCR
-- Clear and simple user flows
-- Calm and personal user experience
-
-Technology should never become the center of attention.
-
-Reading and preserving meaningful moments should.
-
-# What We Are Validating
-
-This MVP exists to answer one fundamental question:
-
-> Will readers naturally choose BookBite as part of their reading habit because it allows them to preserve meaningful moments without breaking their immersion?
-
-If the answer is yes, BookBite has validated its foundation and can confidently evolve into a richer personal reading companion.
+Technology and progression must remain subordinate to reading.

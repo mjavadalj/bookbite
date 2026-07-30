@@ -1,122 +1,99 @@
 # BookBite Constitution
 
-Version: 1.0
+**Version:** 2.0
 
----
+## Purpose
 
-# Purpose
+This constitution defines the non-negotiable principles for BookBite. Product, design, engineering, and feature specifications must comply with them.
 
-This constitution defines the non-negotiable principles that guide every product, design, and engineering decision made for BookBite.
+In these specifications:
 
-Features, technical choices, and future roadmaps may evolve, but these principles should remain stable.
+- **must** means required;
+- **should** means strongly preferred unless a documented reason prevents it;
+- **may** means optional.
 
-# Principle 1 — Reader First
+## 1. Reader First
 
-BookBite exists to help readers preserve meaningful moments from books without interrupting the reading experience.
+BookBite exists to help readers preserve meaningful moments from physical books without interrupting reading.
 
-Every decision should strengthen the relationship between readers and books.
+Every capability must strengthen the reader's relationship with books. Technology must support reading, not compete with it.
 
-Technology should support reading—not compete with it.
+## 2. Frictionless Capture
 
-# Principle 2 — Frictionless Capture
+Capturing a Bite must require minimal effort. The app must confirm as soon as the page image is safely stored so the reader can continue while OCR finishes.
 
-Capturing a Bite should require as little effort as possible.
+When functionality conflicts with reading flow, reducing interruption takes priority.
 
-Users should be able to preserve meaningful content within seconds and immediately continue reading.
+## 3. Local First
 
-Whenever a trade-off exists, reducing interruption takes priority over adding functionality.
+The complete core workflow must work offline from first launch:
 
+- capture an assigned or unassigned Bite;
+- save its source image durably;
+- process OCR on-device;
+- view and edit its text;
+- access the personal Library and ReadingJourney.
 
-# Principle 3 — Local First
+Network services may enhance the product but must not own or enable the core workflow.
 
-A reader should never lose access to their library because of an internet connection.
+## 4. Personal Ownership and Privacy
 
-Core reading functionality must work completely offline after a book has been added to the user's library.
+PersonalBooks, ReadingCycles, ReadingSessions, Bites, source images, and edits belong to the reader.
 
-Cloud services exist to synchronize, protect, and extend user data—not to define where it lives.
+User data must remain locally accessible. It must not be silently discarded, uploaded, logged, or exposed. Destructive actions must state their effect; permanent deletion requires explicit confirmation.
 
+## 5. Calm, Simple, and Consistent
 
-# Principle 4 — Personal Ownership
+The experience must remain calm, predictable, and easy to understand. Prefer simple solutions over clever or speculative ones.
 
-A user's library is their personal reading space.
+The same action must behave consistently across the product. Motion should explain change or confirm action, never delay the reader or demand attention.
 
-BookBite should help users build a lasting record of their relationship with books rather than optimize for engagement metrics.
+## 6. Performance and Quality
 
-Every Bite belongs to the reader.
+Responsiveness is a product requirement. User actions must receive immediate feedback, and background work must not block unrelated interaction.
 
+A feature is complete only when its positive, negative, empty, loading, offline, accessibility, localization, and recovery states are defined and verified.
 
-# Principle 5 — Calm Experience
+Each feature specification must set measurable performance and quality criteria appropriate to that feature.
 
-The application should feel calm, welcoming, and personal.
+## 7. Inclusive Design
 
-Interfaces should reduce cognitive load and never distract from reading.
+English LTR and Persian RTL are first-class experiences. Localization, bidirectional layout, screen-reader semantics, dynamic text, contrast, touch targets, focus order, and reduced motion must be considered from the start.
 
-Animations should communicate, reinforce feedback, and create delight—not slow users down.
+No essential meaning or action may depend only on color, imagery, orientation, or animation.
 
+## 8. Calm Progression
 
-# Principle 6 — Performance Matters
+Achievements, milestones, and ranks may celebrate reading, consistency, and exploration. They must remain minimal, predefined, and non-competitive.
 
-Responsiveness is a core product feature.
+BookBite must not use leaderboards, social comparison, streak-loss pressure, shame, artificial urgency, or reward-first navigation.
 
-Interactions should feel immediate.
+## 9. Build for Evolution
 
-Users should never perceive unnecessary waiting for actions that can reasonably happen instantly.
+The system should grow through replaceable interfaces and clear module boundaries, not speculative infrastructure or large rewrites.
 
-Performance is part of the user experience—not an engineering afterthought.
+Post-MVP services such as cloud OCR, accounts, backup, synchronization, and social features must remain optional and must not redefine the local domain.
 
-# Principle 7 — Simplicity Before Complexity
+## 10. Specification Governance
 
-Prefer simple solutions over clever ones.
+The seven core specifications are peer authorities with distinct responsibilities:
 
-Every feature should have a clear purpose that supports the primary reading workflow.
+- `vision.md`: product purpose and boundaries;
+- `constitution.md`: non-negotiable principles;
+- `mvp-scope.md`: MVP capabilities and exclusions;
+- `domain-model.md`: canonical concepts and invariants;
+- `architecture.md`: system structure and data flow;
+- `tech-stack.md`: technology decisions;
+- `design-system.md`: interaction and presentation rules.
 
-Avoid unnecessary complexity in both product design and implementation.
+Overlapping statements must remain semantically consistent. A conflict blocks implementation and must be resolved with the product owner; it must never be settled by assumption.
 
+Feature specifications may add detail but must not silently override a core specification.
 
-# Principle 8 — Build for Evolution
+## Final Test
 
-The system should evolve through extension rather than large rewrites.
+Before introducing any product, design, or engineering change, ask:
 
-New capabilities should integrate cleanly without requiring fundamental architectural changes.
+> Does this help readers preserve meaningful moments without pulling them out of the book they are reading?
 
-Future growth should be anticipated without overengineering the present.
-
-# Principle 9 — Product Consistency
-
-Users should encounter predictable behaviors throughout the application.
-
-The same actions should produce the same expectations regardless of where they occur.
-
-Consistency is more valuable than novelty.
-
-# Principle 10 — Inclusive Design
-
-BookBite is designed for readers across languages and cultures.
-
-The product should support multilingual experiences from the beginning, including right-to-left languages such as Persian.
-
-Localization should be considered part of the product architecture—not an afterthought.
-
-# Principle 11 — Quality Matters
-
-Every feature should be complete from the user's perspective.
-
-A feature is not finished when it only works technically; it is finished when it provides a reliable and understandable experience for the user.
-
-Quality is defined by the complete user experience—not only by working functionality.
-
-
-# Principle 12 — Decisions Over Preferences
-
-Product decisions should be guided by BookBite's vision and user experience principles rather than personal preferences or short-term trends.
-
-When uncertainty exists, choose the solution that better supports readers and preserves the reading experience.
-
-
-# Final Principle
-
-Every contributor should be able to answer one question before introducing a feature, animation, architecture decision, or design change:
-
-> Does this help readers preserve meaningful moments without pulling them out of the world they are reading?
-
-If the answer is no, reconsider the decision.
+If not, reconsider it.
