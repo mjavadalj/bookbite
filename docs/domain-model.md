@@ -79,35 +79,40 @@ It has:
 - timestamps;
 - an optional PersonalBook and ReadingCycle assignment.
 
-A session may be captured without choosing a book and assigned later. When assigned to a ReadingCycle, its PersonalBook is derived from that cycle.
+A ReadingSession is active while its end time is absent. At most one ReadingSession may be active.
+
+A session starts only when the reader explicitly starts it or successfully captures source media while no session is active. Opening the Reading Session destination does not create a session. A capture-created session uses the capture start time, may remain unassigned to a book, and can be assigned later.
+
+When assigned to a ReadingCycle, the session's PersonalBook is derived from that cycle.
 
 `FocusMode` is optional distraction-reduced presentation during an active ReadingSession. It is not a separate domain entity.
 
 ## Bite
 
-A `Bite` is the canonical captured unit: a meaningful passage or idea preserved from a physical book.
+A `Bite` is the canonical captured unit: a meaningful passage or idea preserved from a physical book through a page image or the reader's voice.
 
 It has:
 
 - a stable local ID;
-- a source-image reference while the image is retained;
-- editable OCR text when available;
-- an OCR status;
+- exactly one source kind: `pageImage` or `voiceRecording`;
+- a source-media reference while the image or recording is retained;
+- editable extracted text when available;
+- a text-extraction status;
 - creation and update timestamps;
 - optional ReadingSession, PersonalBook, and ReadingCycle assignments.
 
-Allowed OCR statuses:
+Allowed text-extraction statuses:
 
-- `captured`: the source image is durable and awaits processing;
-- `processing`: on-device OCR is running;
+- `captured`: the source media is durable and awaits processing;
+- `processing`: on-device OCR or speech-to-text is running;
 - `ready`: editable text is available;
 - `failed`: processing failed and may be retried.
 
 A Bite may remain unassigned. This is a state of Bite, not a separate entity.
 
-A Bite linked to a ReadingSession inherits that session's PersonalBook and ReadingCycle assignment by default. The user may explicitly detach or reassign it.
+Every newly captured Bite is linked to the active ReadingSession. Capture reuses an existing session or creates one when none is active. A Bite linked to a ReadingSession inherits that session's PersonalBook and ReadingCycle assignment by default. The user may explicitly detach or reassign it.
 
-The source image is retained locally until the user deletes it. Deleting the image must not delete the Bite's editable text.
+Source media is retained locally until the user deletes it. Deleting the source image or recording must not delete the Bite's editable text.
 
 ## ReadingJourney
 
@@ -150,11 +155,15 @@ Assignments may be absent and added later. References must use stable local IDs.
 
 - Catalog data never owns personal data.
 - Core records use stable local IDs before any network operation.
-- Domain entities do not depend on storage, UI, OCR, or catalog frameworks.
+- Domain entities do not depend on storage, UI, text-extraction, or catalog frameworks.
 - A ReadingCycle belongs to exactly one PersonalBook.
+- At most one ReadingSession is active.
+- Opening the Reading Session destination never creates a ReadingSession.
+- Successful capture creates and links a ReadingSession only when none is active.
+- A canceled or failed attempt that does not reach durable capture creates neither a Bite nor a ReadingSession.
 - A ReadingSession assigned to a ReadingCycle derives the same PersonalBook.
 - A session-linked Bite inherits the session assignment unless explicitly overridden.
-- Interrupted OCR must resume or enter a recoverable failed state after restart.
+- Interrupted text extraction must resume or enter a recoverable failed state after restart.
 - Archiving a PersonalBook preserves its ReadingCycles, ReadingSessions, and Bites.
 
 ## Terminology

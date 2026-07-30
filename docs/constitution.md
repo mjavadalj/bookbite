@@ -1,6 +1,6 @@
 # BookBite Constitution
 
-**Version:** 2.0
+**Version:** 2.1
 
 ## Purpose
 
@@ -20,7 +20,7 @@ Every capability must strengthen the reader's relationship with books. Technolog
 
 ## 2. Frictionless Capture
 
-Capturing a Bite must require minimal effort. The app must confirm as soon as the page image is safely stored so the reader can continue while OCR finishes.
+Capturing a Bite must require minimal effort. The app must confirm as soon as its page image or voice recording is safely stored so the reader can continue while text extraction finishes.
 
 When functionality conflicts with reading flow, reducing interruption takes priority.
 
@@ -29,8 +29,8 @@ When functionality conflicts with reading flow, reducing interruption takes prio
 The complete core workflow must work offline from first launch:
 
 - capture an assigned or unassigned Bite;
-- save its source image durably;
-- process OCR on-device;
+- save its source image or voice recording durably;
+- process OCR or speech-to-text on-device;
 - view and edit its text;
 - access the personal Library and ReadingJourney.
 
@@ -38,7 +38,7 @@ Network services may enhance the product but must not own or enable the core wor
 
 ## 4. Personal Ownership and Privacy
 
-PersonalBooks, ReadingCycles, ReadingSessions, Bites, source images, and edits belong to the reader.
+PersonalBooks, ReadingCycles, ReadingSessions, Bites, source images, voice recordings, and edits belong to the reader.
 
 User data must remain locally accessible. It must not be silently discarded, uploaded, logged, or exposed. Destructive actions must state their effect; permanent deletion requires explicit confirmation.
 
@@ -72,7 +72,7 @@ BookBite must not use leaderboards, social comparison, streak-loss pressure, sha
 
 The system should grow through replaceable interfaces and clear module boundaries, not speculative infrastructure or large rewrites.
 
-Post-MVP services such as cloud OCR, accounts, backup, synchronization, and social features must remain optional and must not redefine the local domain.
+Post-MVP services such as cloud text extraction, accounts, backup, synchronization, and social features must remain optional and must not redefine the local domain.
 
 ## 10. Specification Governance
 

@@ -25,6 +25,7 @@ The minimum Android API level and reference performance device require product a
 | HTTP | Dart `http` Client | Inject clients and keep provider logic behind adapters |
 | Catalog | Open Library | Free initial provider; cache results and keep replaceable |
 | Camera | Official Flutter `camera` package | Access through an application-facing interface |
+| Audio recording | Flutter `record` package | Record 16 kHz mono PCM WAV to app-private storage behind an interface |
 | File locations | Official `path_provider` package | Use app-private storage |
 | Localization | Flutter `gen_l10n`, ARB, and `intl` | English LTR and Persian RTL from the first feature |
 
@@ -41,10 +42,21 @@ Open Library requests must follow its identification, caching, and rate-limit gu
 
 The MVP uses no cloud or paid OCR. Future cloud OCR requires a separate approved specification, explicit consent, and a replaceable adapter.
 
+## Speech-to-Text
+
+| Area | Decision | Constraint |
+|---|---|---|
+| Engine | `whisper.cpp` | Free, multilingual, and fully on-device in MVP |
+| Integration | Dart interface with isolated native Android/iOS adapters | No engine types outside the data adapter |
+| Model | Bundled quantized multilingual Whisper model | Must support English and Persian without a runtime download |
+| Execution | Background processing after recording stops | Must not block the UI; must resume or fail recoverably |
+
+The model variant must be pinned after English/Persian accuracy, package-size, memory, and latency testing on the approved minimum device. The MVP uses no cloud or paid speech-to-text.
+
 ## Storage
 
 - Drift/SQLite stores structured domain and processing data.
-- App-private files store retained source images.
+- App-private files store retained source images and voice recordings.
 - File references are managed through the database.
 - Capture, cleanup, archive, deletion, and migration workflows must be tested.
 - Encryption beyond operating-system app-private storage requires a separate product/security decision.
@@ -61,6 +73,10 @@ Use:
 - fakes before mocks where practical.
 
 Tests must cover positive, negative, edge, offline, restart, recovery, accessibility, RTL, and data-preservation behavior appropriate to each feature.
+
+Voice-capture tests must cover permission denial, Cancel, the 30-second automatic stop, durable audio retention, retry after restart, deletion, and English/Persian transcription.
+
+ReadingSession tests must verify idle launch, explicit Start, automatic start on successful Photo or Voice capture, active-session reuse, Bite linkage, and no session creation after denied, canceled, or pre-capture failure paths.
 
 ## Quality and CI
 
@@ -87,10 +103,11 @@ It includes no:
 - authentication;
 - cloud storage or synchronization;
 - cloud OCR;
+- cloud speech-to-text;
 - remote analytics SDK;
 - remote crash-reporting SDK.
 
-Logs must exclude OCR text, page images, and sensitive personal metadata.
+Logs must exclude extracted text, page images, voice recordings, and sensitive personal metadata.
 
 ## Specification-Driven Development
 

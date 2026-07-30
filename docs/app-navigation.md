@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines BookBite's MVP-wide navigation: main destinations, global Capture Bite behavior, cross-feature routes, back behavior, and restoration.
+This document defines BookBite's MVP-wide navigation: main destinations, global Bite capture behavior, cross-feature routes, back behavior, and restoration.
 
 Feature specifications own their internal screens, parameters, states, and edge cases.
 
@@ -22,9 +22,11 @@ Reading Session is the default launch destination.
 
 On launch:
 
-- resume an active ReadingSession when one exists;
-- otherwise show the Reading Session root with Capture Bite as the primary action;
-- never require a PersonalBook or ReadingSession before capture.
+- show the active ReadingSession when one exists;
+- otherwise show the Reading Session root in its idle state with Start, Photo, and Voice available;
+- never create or start a ReadingSession merely because the destination opened.
+
+The reader may start a session explicitly without choosing a PersonalBook. If no session is active, successfully capturing a photo or voice recording starts an unassigned session automatically and links the Bite to it.
 
 Returning from the background preserves the current context. An explicit valid route may open its target directly.
 
@@ -40,25 +42,32 @@ The MVP has five main destinations:
 
 | Destination | Owns |
 |---|---|
-| Reading Session | Quick Capture, start/resume/end session, FocusMode, session Bites |
+| Reading Session | Photo and Voice capture, start/resume/end session, FocusMode, session Bites |
 | Library | Active PersonalBooks, PersonalBook details, related cycles, sessions, and Bites |
 | Discover | Catalog search, CatalogBook overview, import, and manual PersonalBook creation |
 | Journey | Private ReadingJourney, cycles, sessions, Bites, milestones, achievements, and ranks |
-| Settings | Language, appearance, reduced motion, local OCR, and general app preferences |
+| Settings | Language, appearance, reduced motion, local text extraction, and general app preferences |
 
 Switching destinations preserves their current navigation stacks. Selecting the active destination again returns to its root.
 
-The MVP has no Profile, account, synchronization, cloud OCR, public identity, social, or deep-analytics destination.
+The MVP has no Profile, account, synchronization, cloud text-extraction, public identity, social, or deep-analytics destination.
 
-## Capture Bite
+## Bite Capture
 
-Capture Bite is available from every destination and child route. It is most prominent on Reading Session, whether or not a session is active.
+Photo and Voice are available from every destination and child route. They have equal visual weight and differ only by capture method:
 
-Capture opens above the current context without replacing its navigation stack.
+- Photo captures a page image for OCR.
+- Voice records up to 30 seconds for speech-to-text.
 
-After the source image is durably saved, the user may:
+Reading Session and FocusMode present both as the two primary actions. Other routes present both as compact actions in the bottom navigation area. Neither action is a destination or replaces the current navigation stack.
 
-- return to the previous context while OCR continues; or
+Capture opens above the current context. Voice capture shows recording state and elapsed or remaining time, permits Stop or Cancel, and stops automatically at 30 seconds. Cancel creates no Bite. Microphone denial shows a localized explanation and access to system settings without affecting Photo.
+
+Capture reuses the active ReadingSession. If none exists, durable capture creates one using the capture start time. Canceling or failing before durable capture completes creates neither a Bite nor a ReadingSession.
+
+After source media is durably saved, the user may:
+
+- return to the previous context while text extraction continues; or
 - open Bite detail to review processing state or edit available text.
 
 Navigation must support assigned and unassigned Bites. Assignment rules belong to the Bite feature specification.
@@ -67,7 +76,7 @@ Navigation must support assigned and unassigned Bites. Assignment rules belong t
 
 ```text
 Reading Session
-├── Capture Bite ──> Bite Detail
+├── Photo / Voice ──> Start or reuse session ──> Bite Detail
 ├── Start / Resume ──> Active Session
 └── Active Session ──> FocusMode / Session Bites / End
 
@@ -85,7 +94,7 @@ Journey
 Settings
 └── Local Application Preferences
 
-Any context ──> Capture Bite
+Any context ──> Photo / Voice
 ```
 
 After creating or importing a PersonalBook, open its details and update Library.
@@ -105,7 +114,7 @@ Back navigation:
 3. remains at the current destination root;
 4. allows the operating system to leave the app from a root destination.
 
-Leaving an incomplete workflow requires confirmation only when unsaved input would be lost. A durably captured Bite is saved even while OCR is pending.
+Leaving an incomplete workflow requires confirmation only when unsaved input would be lost. A durably captured Bite is saved even while text extraction is pending.
 
 Returning from Bite detail restores its originating context when that context still exists.
 
@@ -131,4 +140,4 @@ Each feature specification must define:
 - accessibility, focus, RTL, and reduced-motion behavior;
 - approved links to other features.
 
-Adding a main destination or changing global Capture Bite behavior requires product approval.
+Adding a main destination or changing global Photo or Voice behavior requires product approval.

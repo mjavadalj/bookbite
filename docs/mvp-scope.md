@@ -15,13 +15,13 @@ The MVP succeeds when readers can:
 - discover or manually create a PersonalBook;
 - build and access a local Library;
 - track ReadingCycles and ReadingSessions;
-- capture a page without first selecting a book;
-- receive immediate confirmation that the image is safe;
-- obtain editable Bite text through on-device OCR;
+- capture a page or record their voice without first selecting a book;
+- receive immediate confirmation that the source media is safe;
+- obtain editable Bite text through on-device OCR or speech-to-text;
 - review, edit, assign, and retain Bites offline;
 - view a calm ReadingJourney.
 
-Each feature specification must define measurable performance, accessibility, OCR-quality, reliability, and recovery criteria for its part of these outcomes.
+Each feature specification must define measurable performance, accessibility, text-extraction quality, reliability, and recovery criteria for its part of these outcomes.
 
 ## In Scope
 
@@ -42,17 +42,19 @@ Open Library is the initial catalog provider and must remain replaceable. Catalo
 
 The complete Bite workflow works offline from first launch:
 
-1. capture a physical-book page;
-2. save the source image durably;
+1. capture a physical-book page or record up to 30 seconds of the reader's voice;
+2. save the source image or voice recording durably;
 3. create a Bite with `captured` status;
-4. run free on-device OCR;
+4. run free on-device OCR for an image or speech-to-text for a recording;
 5. save editable text or expose a recoverable failure;
-6. retain the source image until the user deletes it;
+6. retain the source media until the user deletes it;
 7. assign the Bite now or later.
 
-OCR may continue after capture. The user must be free to resume reading as soon as the image is safe.
+Text extraction may continue after capture. The user must be free to resume reading as soon as the source media is safe.
 
 English OCR is the primary release-quality target. Persian OCR is included as a secondary MVP priority. The OCR feature specification must define the required accuracy, latency, and test corpus.
+
+Voice transcription must work fully on-device in English and Persian. Recording stops automatically at 30 seconds. Denied microphone permission must leave photo capture and all existing data usable.
 
 ### Reading Activity
 
@@ -60,9 +62,14 @@ Users can:
 
 - maintain multiple ReadingCycles for a PersonalBook;
 - use the statuses Want to Read, Reading, Paused, Finished, and Dropped;
-- start, end, and later assign ReadingSessions;
+- open the Reading Session destination without starting a session;
+- start and end a ReadingSession manually;
+- start a ReadingSession automatically when the first photo or voice recording is successfully captured without an active session;
+- later assign an unassigned ReadingSession;
 - optionally use FocusMode during a session;
-- capture Bites with or without an active session.
+- capture page-image or voice-recording Bites from any destination.
+
+Capture must reuse the active ReadingSession. When none exists, successful durable capture creates an unassigned session and links the new Bite to it. A canceled or failed attempt that does not reach durable capture creates neither record.
 
 ### ReadingJourney
 
@@ -85,14 +92,14 @@ Local data is the only MVP source of truth.
 
 Network access is used only for external book discovery. Manual creation is the complete fallback. Existing PersonalBooks, ReadingJourney data, and Bite capture must never require the catalog or internet.
 
-The MVP has no account, backend, cloud backup, synchronization, cloud OCR, or remote user-data store.
+The MVP has no account, backend, cloud backup, synchronization, cloud text extraction, or remote user-data store.
 
 ## Out of Scope
 
 The MVP does not include:
 
-- AI-generated summaries, refinement, or OCR correction;
-- cloud OCR;
+- AI-generated summaries, refinement, or automatic text correction;
+- cloud OCR or speech-to-text;
 - accounts, cloud backup, or cross-device synchronization;
 - ebook reading;
 - rich-text editing, sticky notes, or highlights;

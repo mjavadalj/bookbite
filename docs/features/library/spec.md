@@ -2,9 +2,7 @@
 
 ## Purpose
 
-The Library is the emotional home of BookBite.
-
-It is the first space users see when entering the application and represents their personal relationship with books.
+The Library is BookBite's personal space for the reader's books and related history.
 
 The Library is not only a collection of books. It is a personal reading space that grows together with the reader.
 
@@ -30,7 +28,7 @@ The Library transforms a book collection into a personal space where users can s
 
 The Library should:
 
-- Provide a welcoming home screen experience.
+- Provide a welcoming personal-library experience.
 - Represent the user's personal book collection visually.
 - Create emotional attachment to the user's reading journey.
 - Allow quick access to personal books.
@@ -71,9 +69,9 @@ Full book covers are not required in the main Library view.
 
 # User Flow
 
-## First Launch
+## First Library Visit
 
-When a new user opens BookBite:
+When a new user first opens Library:
 
 1. User enters an empty personal Library.
 2. User sees a welcoming empty bookshelf.
@@ -85,11 +83,10 @@ The empty Library should feel like the beginning of a journey, not an unfinished
 
 ## Existing User Flow
 
-1. User opens BookBite.
-2. User enters their Library.
-3. User views their personal bookshelf.
-4. User selects a book.
-5. User enters My Book page.
+1. User opens Library.
+2. User views their personal bookshelf.
+3. User selects a book.
+4. User enters My Book page.
 
 ---
 

@@ -4,7 +4,7 @@
 
 BookBite helps readers preserve meaningful passages and ideas from physical books without interrupting the reading experience.
 
-Reading often produces moments worth remembering, but writing by hand or switching to a generic notes app breaks immersion. BookBite removes that friction: the reader photographs a page, the app saves it locally, extracts text on-device, and creates an editable Bite that can be reviewed later.
+Reading often produces moments worth remembering, but writing by hand or switching to a generic notes app breaks immersion. BookBite removes that friction: the reader photographs a page or records a short spoken passage or idea, the app saves the source locally, extracts text on-device, and creates an editable Bite that can be reviewed later.
 
 ## Audience
 
@@ -14,7 +14,7 @@ Students, researchers, and knowledge-focused readers may also benefit, but acade
 
 ## Product Promise
 
-BookBite must make capturing a meaningful reading moment faster and less disruptive than recording it manually.
+BookBite must make capturing a meaningful reading moment faster and less disruptive than writing it manually.
 
 Over time, PersonalBooks, ReadingCycles, ReadingSessions, and Bites form a private ReadingJourney that reflects the reader's relationship with books.
 
@@ -37,7 +37,7 @@ BookBite is:
 
 - a companion for physical-book reading;
 - an offline-first personal library;
-- a tool for capturing editable Bites;
+- a tool for capturing editable Bites from page images or the reader's voice;
 - a private record of a reader's journey.
 
 BookBite is not:
@@ -50,7 +50,7 @@ BookBite is not:
 
 ## Evolution
 
-The product may later add optional cloud OCR, backup, synchronization, and social capabilities. These additions must preserve local ownership, the calm experience, and the ability to complete the core reading workflow without network access.
+The product may later add optional cloud text extraction, backup, synchronization, and social capabilities. These additions must preserve local ownership, the calm experience, and the ability to complete the core reading workflow without network access.
 
 Every future decision must reinforce one idea:
 

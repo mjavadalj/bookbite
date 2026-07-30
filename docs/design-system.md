@@ -22,10 +22,12 @@ Users must always know whether an action succeeded, is processing, failed, or ca
 
 For Bite capture:
 
-1. confirm when the page image is durably saved;
-2. allow reading to continue while OCR runs;
+1. confirm when the page image or voice recording is durably saved;
+2. allow reading to continue while text extraction runs;
 3. expose `processing`, `ready`, and recoverable `failed` states;
 4. never imply that a pending Bite was lost.
+
+Voice recording must show recording state and elapsed or remaining time without demanding attention. It must provide Stop and Cancel actions and stop automatically at 30 seconds.
 
 Optimistic feedback may be used only when failure can be recovered without losing user data.
 
