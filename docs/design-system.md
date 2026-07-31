@@ -60,6 +60,25 @@ Components must be readable, reusable, accessible, and consistent. New patterns 
 
 Exact token values belong to the design-system implementation and must be reused by feature specifications.
 
+## MVP Theme
+
+The MVP uses **Sage and Paper** as its single approved theme and default appearance. It combines warm paper-like backgrounds, porcelain surfaces, deep olive text, and restrained sage interaction color to support a calm, personal, welcoming experience.
+
+The implementation must derive semantic tokens from this approved foundation:
+
+| Role | Foundation |
+|---|---|
+| Background | warm paper `#F3EFE6` |
+| Surface | porcelain `#FBF8F1` |
+| Foreground | deep olive ink `#293128` |
+| Primary interaction | accessible forest sage `#566A4A` |
+| Secondary text | warm gray `#6E7268` |
+| Border | soft warm gray `#DDD5C8` |
+
+Lighter sage and natural book-cover colors may provide low-emphasis atmosphere, but must not replace semantic contrast or status meaning.
+
+Theme selection and the dark **Ember and Ink** direction are post-MVP. Adding them later requires a separate specification update, complete semantic-token mapping, independent contrast verification, and parity for every interaction and state. The MVP Settings experience does not expose a theme selector.
+
 ## Motion
 
 Motion must be purposeful, brief, and non-blocking. It may explain spatial change or confirm an action; it must not be decorative distraction.

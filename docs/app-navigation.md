@@ -46,7 +46,7 @@ The MVP has five main destinations:
 | Library | Active PersonalBooks, PersonalBook details, related cycles, sessions, and Bites |
 | Discover | Catalog search, CatalogBook overview, import, and manual PersonalBook creation |
 | Journey | Private ReadingJourney, cycles, sessions, Bites, milestones, achievements, and ranks |
-| Settings | Language, appearance, reduced motion, local text extraction, and general app preferences |
+| Settings | Language, reduced motion, local text extraction, and general app preferences |
 
 Switching destinations preserves their current navigation stacks. Selecting the active destination again returns to its root.
 
@@ -54,12 +54,14 @@ The MVP has no Profile, account, synchronization, cloud text-extraction, public 
 
 ## Bite Capture
 
-Photo and Voice are available from every destination and child route. They have equal visual weight and differ only by capture method:
+Photo and Voice are available from every main destination and eligible child route. They have equal visual weight and differ only by capture method:
 
 - Photo captures a page image for OCR.
 - Voice records up to 30 seconds for speech-to-text.
 
-Reading Session and FocusMode present both as the two primary actions. Other routes present both as compact actions in the bottom navigation area. Neither action is a destination or replaces the current navigation stack.
+Reading Session and FocusMode present both as the two primary actions. Other eligible routes present both as compact actions in the bottom navigation area. Neither action is a destination or replaces the current navigation stack.
+
+CatalogBook overview and focused catalog search do not expose Photo or Voice. These routes prioritize evaluating or locating a catalog record. Back or Cancel returns to the Discover root, where both capture actions remain available.
 
 Capture opens above the current context. Voice capture shows recording state and elapsed or remaining time, permits Stop or Cancel, and stops automatically at 30 seconds. Cancel creates no Bite. Microphone denial shows a localized explanation and access to system settings without affecting Photo.
 
@@ -94,7 +96,7 @@ Journey
 Settings
 └── Local Application Preferences
 
-Any context ──> Photo / Voice
+Any eligible context ──> Photo / Voice
 ```
 
 After creating or importing a PersonalBook, open its details and update Library.
