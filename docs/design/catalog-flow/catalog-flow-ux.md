@@ -43,10 +43,10 @@ Reference screens:
 - The page scrolls vertically.
 - The category rail scrolls horizontally and preserves its position when returning from a child route.
 - A partially visible final chip communicates horizontal overflow without instructional copy.
-- `All` is the default category. Selecting a category updates the shelves without resetting the main destination stack.
+- `All` is the only functional MVP category. The other approved chips remain visible; activation shows calm localized future-availability feedback without changing results.
 - The first shelf scrolls horizontally. The catalog grid remains vertical to avoid competing gestures.
 - Selecting a book opens CatalogBook detail. It does not add the book directly.
-- Filter opens a dismissible bottom sheet and restores the previous grid and scroll position when closed.
+- Filter remains visible in the MVP; activation shows calm localized future-availability feedback without opening a sheet or changing results.
 - Photo and Voice remain equal compact actions above the five-destination navigation.
 
 ## CatalogBook Detail
@@ -58,7 +58,7 @@ Reference screens:
 - The Add action appears only once in the visible viewport. The body CTA scrolls away before the compact header action appears.
 - With reduced motion enabled, the header switches states without cover interpolation or parallax.
 - Related books are catalog relationships, not personalized recommendations.
-- Returning to Discover restores category selection, filters, query, and scroll position.
+- Returning to Discover restores query, loaded results, rail position, and scroll position.
 - CatalogBook detail does not expose Photo or Voice. Back returns to Discover, where capture remains available.
 
 ## Active Search

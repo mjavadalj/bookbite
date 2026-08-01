@@ -36,9 +36,9 @@ Every major capability must have an approved feature specification before implem
 - [ ] Implement Open Library behind the replaceable catalog interface.
 - [ ] Identify BookBite in Open Library requests and follow the provider's validation, caching, and rate-limit guidance.
 - [ ] Map and validate provider responses before they enter the domain.
-- [ ] Implement category browsing, catalog shelves, the vertical results grid, and filters from the approved design baseline.
+- [ ] Implement the weekly shelf, trending `All` results grid, and category/Filter preview feedback from the approved design baseline.
 - [ ] Implement the dedicated active-search route with Cancel, debounced queries, preserved results during refresh, and restored query state after Back navigation.
-- [ ] Preserve category selection, filters, query, and scroll position when returning from child routes.
+- [ ] Preserve query, loaded results, rail position, and scroll position when returning from child routes.
 - [ ] Cache a bounded set of browse and search summaries.
 - [ ] Search locally cached catalog records when the device is offline and cached data is available.
 - [ ] Expose the manual PersonalBook creation entry point when offline, when the provider is unavailable, or when no result matches.
