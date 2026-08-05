@@ -1,3 +1,27 @@
 .aider*
 .agents*
 skills*
+.tooling/
+.dart_tool/
+
+# Flutter build output and generated tooling
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# Android/Gradle local state
+android/.gradle/
+android/local.properties
+android/app/build/
+android/captures/
+android/gradle.properties.local
+
+# IDE metadata
+.idea/
+*.iml
+
+# Local logs and OS files
+*.log
+.DS_Store
+Thumbs.db
