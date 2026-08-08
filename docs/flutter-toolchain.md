@@ -1,6 +1,6 @@
 # Flutter Toolchain
 
-BookBite is pinned to Flutter `3.38.4`, which bundles Dart `3.10.3`.
+BookBite is pinned to Flutter `3.44.8`, which bundles Dart `3.12.2`.
 
 The committed lockfile pins package resolution. Upgrade Flutter and Dart together
 on a branch, regenerate all generated sources, and pass formatting, analysis,

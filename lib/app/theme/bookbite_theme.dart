@@ -18,6 +18,7 @@ abstract final class BookBiteTokens {
   static const controlRadius = 16.0;
   static const surfaceRadius = 24.0;
   static const minimumTapTarget = Size(48, 48);
+  static const motionDuration = Duration(milliseconds: 180);
 }
 
 abstract final class BookBiteTheme {

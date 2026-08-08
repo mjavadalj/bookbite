@@ -1,16 +1,26 @@
-# bookbite
+# BookBite
 
-A new Flutter project.
+BookBite is a calm, private, offline-first companion for readers of physical books.
 
-## Getting Started
+## Open Library configuration
 
-This project is a starting point for a Flutter application.
+Discover uses the Open Library API only after a human reader starts a browse or
+search action. Open Library requires an identifying User-Agent and contact
+email for this level of use. Put the approved contact in the local, ignored
+`.env` file before running the app:
 
-A few resources to get you started if this is your first Flutter project:
+```dotenv
+OPEN_LIBRARY_CONTACT=your-email@example.com
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Then run normally:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```powershell
+flutter run
+```
+
+The Discover page remains usable without this setting: it clearly explains
+that the catalog is unavailable and exposes manual book creation. An Android
+device/emulator needs normal internet access to fetch live catalog summaries
+and cover thumbnails. Cached catalog information remains separate from the
+reader's local books and reading data.

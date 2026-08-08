@@ -1,5 +1,7 @@
 # BookBite MVP Delivery Roadmap
 
+**Last verified:** 2026-08-08
+
 ## Purpose
 
 This is BookBite's living delivery roadmap. It records the planned implementation order for the current MVP and will be extended as later features are defined.
@@ -13,14 +15,14 @@ Every major capability must have an approved feature specification before implem
 
 ## 1. Application Foundation
 
-- [ ] Bootstrap the Flutter application using the approved feature-first Clean Architecture structure.
-- [ ] Pin the Flutter and Dart SDK versions and enable strict analysis.
+- [x] Bootstrap the Flutter application using the approved feature-first Clean Architecture structure.
+- [x] Pin the Flutter and Dart SDK versions and enable strict analysis.
 - [ ] Implement the Sage and Paper MVP theme using shared semantic design tokens.
-- [ ] Configure English LTR and Persian RTL localization from the first feature.
+- [x] Configure English LTR and Persian RTL localization from the first feature.
 - [ ] Create the generated typed `go_router` navigation shell and restoration foundations.
 - [ ] Configure Riverpod 3 with code generation for dependency wiring and presentation state.
 - [ ] Configure Drift over SQLite with schema versioning and migration-test support.
-- [ ] Establish replaceable interfaces for catalog access, managed file storage, OCR, speech-to-text, clocks, and ID generation.
+- [x] Establish replaceable interfaces for catalog access, managed file storage, OCR, speech-to-text, clocks, and ID generation.
 - [ ] Add baseline CI checks for formatting, analysis, generated code, tests, and database migrations.
 
 ### Completion Gate
@@ -31,18 +33,18 @@ Every major capability must have an approved feature specification before implem
 
 ## 2. Discover and Active Search
 
-- [ ] Write and approve one Discover feature specification covering both browse mode and the dedicated active-search surface.
-- [ ] Define measurable performance, accessibility, localization, caching, restoration, and failure-state criteria in the specification.
-- [ ] Implement Open Library behind the replaceable catalog interface.
-- [ ] Identify BookBite in Open Library requests and follow the provider's validation, caching, and rate-limit guidance.
-- [ ] Map and validate provider responses before they enter the domain.
-- [ ] Implement the weekly shelf, trending `All` results grid, and category/Filter preview feedback from the approved design baseline.
-- [ ] Implement the dedicated active-search route with Cancel, debounced queries, preserved results during refresh, and restored query state after Back navigation.
+- [x] Write and approve one Discover feature specification covering both browse mode and the dedicated active-search surface.
+- [x] Define measurable performance, accessibility, localization, caching, restoration, and failure-state criteria in the specification.
+- [x] Implement Open Library behind the replaceable catalog interface.
+- [x] Identify BookBite in Open Library requests and follow the provider's validation, caching, and rate-limit guidance.
+- [x] Map and validate provider responses before they enter the domain.
+- [x] Implement the weekly shelf, trending `All` results grid, and category/Filter preview feedback from the approved design baseline.
+- [x] Implement the dedicated active-search route with Cancel, debounced queries, preserved results during refresh, and restored query state after Back navigation.
 - [ ] Preserve query, loaded results, rail position, and scroll position when returning from child routes.
 - [ ] Cache a bounded set of browse and search summaries.
 - [ ] Search locally cached catalog records when the device is offline and cached data is available.
-- [ ] Expose the manual PersonalBook creation entry point when offline, when the provider is unavailable, or when no result matches.
-- [ ] Implement populated, loading, refreshing, empty, no-results, offline, catalog-unavailable, recoverable-error, malformed-response, and missing-cover states.
+- [x] Expose the manual PersonalBook creation entry point when offline, when the provider is unavailable, or when no result matches.
+- [x] Implement populated, loading, refreshing, empty, no-results, offline, catalog-unavailable, recoverable-error, malformed-response, and missing-cover states.
 
 ### Completion Gate
 

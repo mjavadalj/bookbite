@@ -10,14 +10,9 @@ pluginManagement {
 
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-
-        // Optional mirror fallback
+repositories {
         maven {
-            url = uri("https://mirror-maven.runflare.com/maven2/")
+            url = uri("https://maven.myket.ir/")
         }
     }
 }

@@ -1,12 +1,12 @@
 # Feature Specification: Discover
 
-**Status:** Proposed; implementation-ready pending product approval
+**Status:** Approved
 
 **Feature owner:** Discover
 
 **MVP platform:** Android, preserving future iOS compatibility
 
-**Last updated:** 2026-08-01
+**Last updated:** 2026-08-05
 
 ## 1. Purpose and outcome
 

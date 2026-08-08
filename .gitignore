@@ -3,6 +3,7 @@
 skills*
 .tooling/
 .dart_tool/
+.env
 
 # Flutter build output and generated tooling
 build/
