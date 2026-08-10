@@ -1,4 +1,5 @@
 import 'package:bookbite/app/theme/bookbite_theme.dart';
+import 'package:bookbite/app/navigation/app_router.dart';
 import 'package:bookbite/core/presentation/localization/bookbite_localizations.dart';
 import 'package:bookbite/features/discover/application/discover_controller.dart';
 import 'package:bookbite/features/discover/domain/catalog_book.dart';
@@ -6,7 +7,6 @@ import 'package:bookbite/features/discover/domain/catalog_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class DiscoverPage extends ConsumerStatefulWidget {
   const DiscoverPage({super.key});
@@ -21,6 +21,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
   final _railController = ScrollController();
   String? _loadedLanguage;
   late final RestorableDouble _scrollOffset = RestorableDouble(0);
+  late final RestorableDouble _railOffset = RestorableDouble(0);
 
   @override
   String? get restorationId => 'discover_browse';
@@ -28,9 +29,15 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_scrollOffset, 'browse_scroll_offset');
+    registerForRestoration(_railOffset, 'category_rail_offset');
     if (_scrollOffset.value > 0) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _scrollController.jumpTo(_scrollOffset.value),
+      );
+    }
+    if (_railOffset.value > 0) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _railController.jumpTo(_railOffset.value),
       );
     }
   }
@@ -56,6 +63,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
         ref.read(discoverControllerProvider.notifier).loadMoreBrowse();
       }
     });
+    _railController.addListener(() {
+      _railOffset.value = _railController.offset;
+    });
   }
 
   @override
@@ -63,6 +73,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
     _scrollController.dispose();
     _railController.dispose();
     _scrollOffset.dispose();
+    _railOffset.dispose();
     super.dispose();
   }
 
@@ -93,7 +104,8 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
                   ),
                   const SizedBox(height: 20),
                   _SearchLauncher(
-                    onPressed: () => context.push('/discover/search'),
+                    onPressed: () =>
+                        const ActiveSearchRoute().push<void>(context),
                   ),
                   const SizedBox(height: 16),
                   _CategoryRail(controller: _railController),
@@ -503,7 +515,8 @@ class _CatalogMessage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
-            onPressed: () => context.push('/manual-book'),
+            onPressed: () =>
+                const ManualBookDestinationRoute().push<void>(context),
             icon: const Icon(Icons.auto_stories_outlined),
             label: Text(strings.manualCreateTitle),
           ),
@@ -578,7 +591,11 @@ void _availabilityFeedback(BuildContext context, String message) {
 }
 
 void _openCatalog(BuildContext context, CatalogBook book, String origin) =>
-    context.push('/catalog/${book.provider}/${book.id}?origin=$origin');
+    CatalogBookDestinationRoute(
+      provider: book.provider,
+      id: book.id,
+      origin: origin,
+    ).push<void>(context);
 
 TextDirection _contentDirection(String text) =>
     RegExp(r'[\u0600-\u06FF]').hasMatch(text)

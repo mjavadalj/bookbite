@@ -1,4 +1,5 @@
 import 'package:bookbite/core/presentation/widgets/bookbite_bottom_bar.dart';
+import 'package:bookbite/app/navigation/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,7 +26,13 @@ class AppShell extends StatelessWidget {
       bottomNavigationBar: BookBiteBottomBar(
         selectedIndex: selectedIndex,
         showCaptureActions: currentLocation != '/reading-session',
-        onDestinationSelected: (index) => context.go(_locations[index]),
+        onDestinationSelected: (index) => switch (index) {
+          0 => const ReadingSessionRoute().go(context),
+          1 => const LibraryRoute().go(context),
+          2 => const DiscoverRoute().go(context),
+          3 => const JourneyRoute().go(context),
+          _ => const SettingsRoute().go(context),
+        },
       ),
     );
   }

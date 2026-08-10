@@ -1,22 +1,23 @@
 import 'dart:async';
 
 import 'package:bookbite/features/discover/data/bounded_catalog_cache.dart';
+import 'package:bookbite/core/data/database/database_providers.dart';
 import 'package:bookbite/features/discover/data/open_library_catalog_repository.dart';
 import 'package:bookbite/features/discover/domain/catalog_book.dart';
 import 'package:bookbite/features/discover/domain/catalog_repository.dart';
 import 'package:bookbite/features/discover/domain/search_query.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
+part 'discover_controller.g.dart';
+
+@Riverpod(keepAlive: true)
+CatalogRepository catalogRepository(Ref ref) {
   return OpenLibraryCatalogRepository(
     client: DartCatalogHttpClient(),
     contact: dotenv.env['OPEN_LIBRARY_CONTACT'] ?? '',
   );
-});
-
-final discoverControllerProvider =
-    NotifierProvider<DiscoverController, DiscoverState>(DiscoverController.new);
+}
 
 enum CatalogStatus { initial, loading, populated, empty, error, offline }
 
@@ -101,9 +102,10 @@ class DiscoverState {
   );
 }
 
-class DiscoverController extends Notifier<DiscoverState> {
+@Riverpod(keepAlive: true)
+class DiscoverController extends _$DiscoverController {
   late final CatalogRepository _repository;
-  final _cache = BoundedCatalogCache();
+  late final BoundedCatalogCache _cache;
   Timer? _debounce;
   int _searchGeneration = 0;
   bool _loadingBrowseMore = false;
@@ -112,6 +114,7 @@ class DiscoverController extends Notifier<DiscoverState> {
   @override
   DiscoverState build() {
     _repository = ref.read(catalogRepositoryProvider);
+    _cache = BoundedCatalogCache(store: ref.read(catalogCacheStoreProvider));
     ref.onDispose(() => _debounce?.cancel());
     return const DiscoverState();
   }
@@ -135,10 +138,10 @@ class DiscoverController extends Notifier<DiscoverState> {
     try {
       final page = await _repository.weekly(language: _language);
       final books = _unique(page.books).take(10).toList(growable: false);
-      _cache.write('weekly:$_language', page);
+      await _cache.write('weekly:$_language', page);
       state = state.copyWith(weekly: _sectionFrom(page, books));
     } on CatalogFailure catch (failure) {
-      final cached = _cache.read('weekly:$_language');
+      final cached = await _cache.read('weekly:$_language');
       state = state.copyWith(
         weekly: cached == null
             ? _failedSection(state.weekly, failure)
@@ -168,7 +171,7 @@ class DiscoverController extends Notifier<DiscoverState> {
           ? _unique([...existing.books, ...page.books])
           : _unique(page.books);
       final updated = _sectionFrom(page, books);
-      _cache.write('browse:$_language:${offset ~/ 20}', page);
+      await _cache.write('browse:$_language:${offset ~/ 20}', page);
       state = state.copyWith(browse: updated);
     } on CatalogFailure catch (failure) {
       state = state.copyWith(browse: _failedSection(existing, failure));
@@ -273,7 +276,7 @@ class DiscoverController extends Notifier<DiscoverState> {
       final books = append
           ? _unique([...existing.books, ...page.books])
           : _unique(page.books);
-      _cache.write('search:${query.value}:$offset', page);
+      await _cache.write('search:${query.value}:$offset', page);
       state = state.copyWith(
         search: _sectionFrom(page, books),
         submittedQuery: query.value,
@@ -281,10 +284,9 @@ class DiscoverController extends Notifier<DiscoverState> {
       );
     } on CatalogFailure catch (failure) {
       if (generation != _searchGeneration) return;
-      final cachedBooks = _cache
-          .search(query.value)
-          .take(100)
-          .toList(growable: false);
+      final cachedBooks = (await _cache.search(
+        query.value,
+      )).take(100).toList(growable: false);
       state = state.copyWith(
         search: cachedBooks.isNotEmpty
             ? CatalogSection(

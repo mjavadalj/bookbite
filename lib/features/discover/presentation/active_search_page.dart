@@ -1,4 +1,5 @@
 import 'package:bookbite/app/theme/bookbite_theme.dart';
+import 'package:bookbite/app/navigation/app_router.dart';
 import 'package:bookbite/core/presentation/localization/bookbite_localizations.dart';
 import 'package:bookbite/features/discover/application/discover_controller.dart';
 import 'package:bookbite/features/discover/domain/catalog_book.dart';
@@ -13,14 +14,29 @@ class ActiveSearchPage extends ConsumerStatefulWidget {
   ConsumerState<ActiveSearchPage> createState() => _ActiveSearchPageState();
 }
 
-class _ActiveSearchPageState extends ConsumerState<ActiveSearchPage> {
+class _ActiveSearchPageState extends ConsumerState<ActiveSearchPage>
+    with RestorationMixin {
   final _input = TextEditingController();
   final _focus = FocusNode();
   final _scroll = ScrollController();
+  final _restoredQuery = RestorableString('');
+
+  @override
+  String? get restorationId => 'discover_active_search_state';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_restoredQuery, 'query');
+    if (widget.initialQuery == null && _restoredQuery.value.isNotEmpty) {
+      _input.text = _restoredQuery.value;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _input.text = widget.initialQuery ?? '';
+    _input.addListener(() => _restoredQuery.value = _input.text);
     _scroll.addListener(() {
       if (_scroll.position.extentAfter < 600)
         ref.read(discoverControllerProvider.notifier).loadMoreSearch();
@@ -40,6 +56,7 @@ class _ActiveSearchPageState extends ConsumerState<ActiveSearchPage> {
     _input.dispose();
     _focus.dispose();
     _scroll.dispose();
+    _restoredQuery.dispose();
     super.dispose();
   }
 
@@ -135,12 +152,14 @@ class _ActiveSearchPageState extends ConsumerState<ActiveSearchPage> {
                 section: state.search,
                 query: state.submittedQuery,
                 pending: state.pendingQuery,
-                onOpen: (book) => context.push(
-                  '/catalog/${book.provider}/${book.id}?origin=search',
-                ),
-                onManual: () => context.push(
-                  '/manual-book?query=${Uri.encodeComponent(state.visibleQuery.trim())}',
-                ),
+                onOpen: (book) => CatalogBookDestinationRoute(
+                  provider: book.provider,
+                  id: book.id,
+                  origin: 'search',
+                ).push<void>(context),
+                onManual: () => ManualBookDestinationRoute(
+                  query: state.visibleQuery.trim(),
+                ).push<void>(context),
                 onRetry: controller.submitSearch,
                 onLoadMore: controller.loadMoreSearch,
               ),

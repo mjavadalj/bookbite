@@ -1,6 +1,6 @@
 # BookBite MVP Delivery Roadmap
 
-**Last verified:** 2026-08-08
+**Last verified:** 2026-08-10
 
 ## Purpose
 
@@ -17,19 +17,19 @@ Every major capability must have an approved feature specification before implem
 
 - [x] Bootstrap the Flutter application using the approved feature-first Clean Architecture structure.
 - [x] Pin the Flutter and Dart SDK versions and enable strict analysis.
-- [ ] Implement the Sage and Paper MVP theme using shared semantic design tokens.
+- [x] Implement the Sage and Paper MVP theme using shared semantic design tokens.
 - [x] Configure English LTR and Persian RTL localization from the first feature.
-- [ ] Create the generated typed `go_router` navigation shell and restoration foundations.
-- [ ] Configure Riverpod 3 with code generation for dependency wiring and presentation state.
-- [ ] Configure Drift over SQLite with schema versioning and migration-test support.
+- [x] Create the generated typed `go_router` navigation shell and restoration foundations.
+- [x] Configure Riverpod 3 with code generation for dependency wiring and presentation state.
+- [x] Configure Drift over SQLite with schema versioning and migration-test support.
 - [x] Establish replaceable interfaces for catalog access, managed file storage, OCR, speech-to-text, clocks, and ID generation.
-- [ ] Add baseline CI checks for formatting, analysis, generated code, tests, and database migrations.
+- [x] Add baseline CI checks for formatting, analysis, generated code, tests, and database migrations.
 
 ### Completion Gate
 
-- [ ] The application launches into the approved navigation shell in English and Persian.
-- [ ] Architecture boundaries can be verified without concrete catalog, OCR, or speech framework types leaking into the domain.
-- [ ] The initial database can be created, reopened, and migrated through automated tests.
+- [x] The application launches into the approved navigation shell in English and Persian.
+- [x] Architecture boundaries can be verified without concrete catalog, OCR, or speech framework types leaking into the domain.
+- [x] The initial database can be created, reopened, and migrated through automated tests.
 
 ## 2. Discover and Active Search
 
@@ -40,17 +40,17 @@ Every major capability must have an approved feature specification before implem
 - [x] Map and validate provider responses before they enter the domain.
 - [x] Implement the weekly shelf, trending `All` results grid, and category/Filter preview feedback from the approved design baseline.
 - [x] Implement the dedicated active-search route with Cancel, debounced queries, preserved results during refresh, and restored query state after Back navigation.
-- [ ] Preserve query, loaded results, rail position, and scroll position when returning from child routes.
-- [ ] Cache a bounded set of browse and search summaries.
-- [ ] Search locally cached catalog records when the device is offline and cached data is available.
+- [x] Preserve query, loaded results, rail position, and scroll position when returning from child routes.
+- [x] Cache a bounded set of browse and search summaries.
+- [x] Search locally cached catalog records when the device is offline and cached data is available.
 - [x] Expose the manual PersonalBook creation entry point when offline, when the provider is unavailable, or when no result matches.
 - [x] Implement populated, loading, refreshing, empty, no-results, offline, catalog-unavailable, recoverable-error, malformed-response, and missing-cover states.
 
 ### Completion Gate
 
-- [ ] Browse and search remain responsive and restore their prior state after navigation and application restoration.
-- [ ] Offline search clearly identifies locally cached results and never presents them as newly fetched data.
-- [ ] Open Library failure does not affect local data or other application destinations.
+- [x] Browse and search remain responsive and restore their prior state after navigation and application restoration.
+- [x] Offline search clearly identifies locally cached results and never presents them as newly fetched data.
+- [x] Open Library failure does not affect local data or other application destinations.
 - [ ] Discover and Active Search pass their unit, state, widget, accessibility, RTL, and adapter-contract tests.
 
 ## 3. CatalogBook Detail
