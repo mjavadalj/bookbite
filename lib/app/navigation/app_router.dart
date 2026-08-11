@@ -2,6 +2,7 @@ import 'package:bookbite/app/navigation/app_shell.dart';
 import 'package:bookbite/features/discover/presentation/active_search_page.dart';
 import 'package:bookbite/features/discover/presentation/discover_destination_placeholders.dart';
 import 'package:bookbite/features/discover/presentation/discover_page.dart';
+import 'package:bookbite/features/catalog/presentation/catalog_book_detail_page.dart';
 import 'package:bookbite/features/journey/presentation/journey_page.dart';
 import 'package:bookbite/features/library/presentation/library_page.dart';
 import 'package:bookbite/features/reading_session/presentation/reading_session_page.dart';
@@ -120,9 +121,10 @@ class CatalogBookDestinationRoute extends GoRouteData
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
       MaterialPage(
         restorationId: 'catalog_book_destination',
-        child: CatalogBookDestinationPlaceholder(
+        child: CatalogBookDetailPage(
           provider: provider,
           bookId: id,
+          origin: origin,
         ),
       );
 }

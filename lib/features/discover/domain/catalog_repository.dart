@@ -1,4 +1,5 @@
 import 'catalog_book.dart';
+import 'catalog_book_detail.dart';
 
 enum CatalogSource { network, freshCache, staleCache, offlineCache }
 
@@ -43,5 +44,18 @@ abstract interface class CatalogRepository {
     required bool isIsbn,
     required String language,
     required int offset,
+  });
+
+  Future<CatalogBookDetail> detail({
+    required String provider,
+    required String id,
+    String? workId,
+    required String language,
+  });
+
+  Future<List<CatalogBook>> related({
+    required CatalogBookDetail book,
+    required String language,
+    int limit = 10,
   });
 }

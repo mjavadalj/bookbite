@@ -96,3 +96,51 @@ final class CatalogCacheStoreProvider
 }
 
 String _$catalogCacheStoreHash() => r'1754e62fe73334fed183a72f2e6b35318b7ab6b6';
+
+@ProviderFor(catalogDetailCacheStore)
+final catalogDetailCacheStoreProvider = CatalogDetailCacheStoreProvider._();
+
+final class CatalogDetailCacheStoreProvider
+    extends
+        $FunctionalProvider<
+          CatalogDetailCacheStore,
+          CatalogDetailCacheStore,
+          CatalogDetailCacheStore
+        >
+    with $Provider<CatalogDetailCacheStore> {
+  CatalogDetailCacheStoreProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'catalogDetailCacheStoreProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$catalogDetailCacheStoreHash();
+
+  @$internal
+  @override
+  $ProviderElement<CatalogDetailCacheStore> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  CatalogDetailCacheStore create(Ref ref) {
+    return catalogDetailCacheStore(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CatalogDetailCacheStore value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CatalogDetailCacheStore>(value),
+    );
+  }
+}
+
+String _$catalogDetailCacheStoreHash() =>
+    r'3163692520143ac591d515f3ab200971c3a6b50e';

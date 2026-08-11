@@ -55,25 +55,24 @@ Every major capability must have an approved feature specification before implem
 
 ## 3. CatalogBook Detail
 
-- [ ] Write and approve a separate CatalogBook Detail feature specification.
-- [ ] Implement the approved cover-led detail screen and collapsing header behavior.
-- [ ] Display available cover, title, authors, description, publication date, edition, language, page count, identifiers, subjects or categories, and related books.
-- [ ] Handle absent or inconsistent provider fields without inventing metadata.
-- [ ] Fetch and cache full CatalogBook metadata when a detail page is opened.
-- [ ] Keep the five most recently opened full-detail records using least-recently-used eviction.
-- [ ] Update recency whenever a cached CatalogBook detail is opened.
-- [ ] Serve CatalogBook Detail offline when its full record is cached.
-- [ ] Show a recoverable unavailable state when the requested detail is neither reachable nor cached.
-- [ ] Keep disposable CatalogBook detail records separate from permanent PersonalBook metadata snapshots.
-- [ ] Ensure imported PersonalBook metadata is never deleted by catalog-cache eviction.
-- [ ] Restore the originating Discover or Active Search state when navigating back.
+- [x] Write and approve a separate CatalogBook Detail feature specification.
+- [x] Implement the approved cover-led detail screen and collapsing header behavior.
+- [x] Display available cover, title, authors, description, publication date, edition, language, page count, identifiers, subjects or categories, and related books.
+- [x] Handle absent or inconsistent provider fields without inventing metadata.
+- [x] Fetch and cache full CatalogBook metadata when a detail page is opened.
+- [x] Keep the five most recently opened full-detail records using least-recently-used eviction.
+- [x] Update recency whenever a cached CatalogBook detail is opened.
+- [x] Serve CatalogBook Detail offline when its full record is cached.
+- [x] Show a recoverable unavailable state when the requested detail is neither reachable nor cached.
+- [x] Keep disposable CatalogBook detail records separate from permanent PersonalBook metadata snapshots.
+- [x] Ensure imported PersonalBook metadata is never deleted by catalog-cache eviction.
+- [x] Restore the originating Discover or Active Search state when navigating back.
 
 ### Completion Gate
 
-- [ ] The full-detail cache never retains more than five disposable detail records.
+- [x] The full-detail cache never retains more than five disposable detail records.
 - [ ] LRU eviction and offline detail behavior pass repository and integration tests.
 - [ ] Missing fields, missing covers, malformed responses, provider failure, restart, reduced motion, dynamic text, and RTL are verified.
-
 ## 4. Add to Personal Library
 
 - [ ] Finalize and approve the import and manual PersonalBook creation behavior in the relevant feature specification.
