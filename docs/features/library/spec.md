@@ -1,291 +1,254 @@
 # Feature Specification: Library
 
-## Purpose
+**Status:** Proposed  
+**Feature owner:** Library  
+**MVP platform:** Android, preserving future iOS compatibility  
+**Last updated:** 2026-08-11
 
-The Library is BookBite's personal space for the reader's books and related history.
+## 1. Purpose
 
-The Library is not only a collection of books. It is a personal reading space that grows together with the reader.
+Library is the reader’s calm, personal view of their books in BookBite.
 
-The goal is to make users feel:
+The MVP provides a simple, fully offline way to:
 
-- This is my reading world.
-- These are my books.
-- My reading journey is growing over time.
+- view active `PersonalBook`s;
+- add another book through Discover; and
+- open a selected book through the future PersonalBook Detail route.
 
----
+Library should feel warm, friendly, and personal without becoming a progression dashboard or complex bookshelf simulation.
 
-# User Problem
+## 2. Scope
 
-Many reading applications represent books as simple lists or data collections.
+### In scope
 
-BookBite should help users feel ownership and emotional connection with their reading journey.
+- Library root at `/library`;
+- active local `PersonalBook`s;
+- vertically scrollable, spine-inspired bookshelf;
+- Add Book navigation to Discover Active Search;
+- book-selection route handoff;
+- loading, empty, populated, and recoverable error states;
+- offline use and scroll restoration;
+- English LTR, Persian RTL, accessibility, large text, and reduced motion.
 
-The Library transforms a book collection into a personal space where users can see their progress and memories.
+### Out of scope
 
----
+- Library search, filters, categories, or sorting controls;
+- PersonalBook Detail content;
+- importing, manual creation, editing, archiving, or deletion workflows;
+- reading progress, streaks, achievements, ranks, or milestones;
+- functional decorations, room customization, themes, or atmosphere changes;
+- Profile, accounts, notifications, social features, or analytics;
+- changes to the existing app shell, bottom navigation, Photo, or Voice actions;
+- pixel-perfect reproduction of the supplied reference.
 
-# Goals
+Linked features own their behavior. Library owns only its root experience and outgoing navigation.
 
-The Library should:
+## 3. Fixed MVP decisions
 
-- Provide a welcoming personal-library experience.
-- Represent the user's personal book collection visually.
-- Create emotional attachment to the user's reading journey.
-- Allow quick access to personal books.
-- Support lightweight gamification and personalization.
-- Encourage users to continue reading.
+1. Library shows only active `PersonalBook`s. Archived books remain stored but are excluded.
+2. Local storage is the sole source of truth. Library makes no network or catalog request.
+3. Books are ordered by creation time, newest first.
+4. Library is one vertically scrollable page with no page-level horizontal scrolling.
+5. The physical-shelf metaphor stays simple. Readability takes priority over realism.
+6. The existing Sage and Paper theme and shared components must be reused.
+7. Library has no search. Add Book opens Discover Active Search with an empty query.
+8. Selecting a book passes its stable local ID to the PersonalBook Detail route.
+9. Library uses the existing `AppShell` and does not render or redesign bottom navigation.
+10. The existing destinations remain Reading Session, Library, Discover, Journey, and Settings. Global Photo and Voice behavior remains unchanged.
 
----
+## 4. Data contract
 
-# Non Goals
+Library observes active PersonalBook summaries from local storage.
 
-The Library is not:
+Each summary needs only:
 
-- A book discovery system.
-- A general catalog browser.
-- A social feed.
-- A statistics dashboard.
-- A replacement for the Profile page.
+- stable local PersonalBook ID;
+- required title;
+- optional display author;
+- creation timestamp.
 
----
+The data updates reactively when another feature creates or archives a PersonalBook. Database and catalog-provider types must not leak into the Library UI.
 
-# Core Experience
+Library presentation has four states:
 
-The Library should feel like a personal physical bookshelf.
+- initial loading;
+- empty;
+- populated;
+- recoverable local-read error with Retry.
 
-Books should appear as physical books placed on shelves.
+Retry must never modify, reset, or delete personal data.
 
-The user should recognize books primarily through their spines.
+## 5. MVP experience
 
-The main representation should focus on:
+### Page structure
 
-- Book titles displayed on the spine.
-- Books arranged together as a personal collection.
-- A calm and welcoming environment.
+The Library body contains:
 
-Full book covers are not required in the main Library view.
+1. a compact localized Library heading;
+2. one visible Add Book action;
+3. the empty state or scrollable bookshelf.
 
----
+The page uses the safe content area provided by the existing app shell. It must not duplicate or overlap the bottom navigation.
 
-# User Flow
+### Bookshelf
 
-## First Library Visit
+- Books appear as simple, selectable, spine-inspired items on shelf rows.
+- The shelf scrolls vertically and builds off-screen items lazily.
+- Every book title remains readable.
+- Optional author text may be omitted when space is limited.
+- Long and mixed-direction titles truncate or wrap predictably.
+- Persian and large-text layouts may simplify the spine treatment instead of rotating unreadable text.
+- Styling uses shared Sage and Paper tokens.
+- No detailed room illustration or decorative asset set is required for MVP.
 
-When a new user first opens Library:
+### Add Book
 
-1. User enters an empty personal Library.
-2. User sees a welcoming empty bookshelf.
-3. User is guided toward adding their first book.
+Add Book opens Discover Active Search with an empty, focused search field.
 
-The empty Library should feel like the beginning of a journey, not an unfinished state.
+Discover owns catalog search, provider failures, offline cached search, and manual creation. Library does not duplicate those workflows.
 
----
+When a book is added elsewhere, Library updates from local storage and places the new book near the beginning of the shelf.
 
-## Existing User Flow
+### Open Book
 
-1. User opens Library.
-2. User views their personal bookshelf.
-3. User selects a book.
-4. User enters My Book page.
+Selecting a book invokes the PersonalBook Detail route with its stable local ID.
 
----
+Library owns only tap feedback and navigation handoff. PersonalBook Detail owns the destination page, history, cycles, sessions, Bites, editing, archiving, and missing-record behavior.
 
-# Functional Requirements
+Until PersonalBook Detail is implemented, this handoff may be tested with a route fake. No placeholder detail UI is required.
 
-## Bookshelf Representation
+## 6. States
 
-The Library should display:
+### Loading
 
-- User's saved books.
-- Books arranged visually as a bookshelf.
-- Book titles visible on the spine.
-- Selectable books.
+Show a lightweight placeholder inside the Library content area. Keep the app shell usable.
 
-Users should be able to identify and open books directly from the shelf.
+### Empty
 
----
+Show a welcoming empty shelf, short localized guidance, and Add Book. Do not use progression, rewards, or urgency.
 
-## Book Selection
+### Populated
 
-When a user selects a book:
+Show the ordered, vertically scrollable bookshelf and Add Book.
 
-The application should transition to:
+### Error
 
-My Book page.
+Show a concise localized explanation and Retry. Do not imply that books were deleted.
 
-My Book contains the user's personal relationship with that book:
+### Offline
 
-- Reading Journey.
-- Reading Cycles.
-- Reading Sessions.
-- Captured Bites.
-- Notes.
-- Personal progress.
+Offline is normal Library behavior. Existing PersonalBooks remain visible and selectable.
 
----
+### Restoration
 
-## Adding Books
+Restore the previous valid scroll position after child navigation, switching main destinations, or normal app restoration.
 
-The Library should provide an Add Book action.
+## 7. Accessibility and localization
 
-The Add Book action should:
+- Localize all visible and semantic text in English and Persian.
+- Support natural LTR and RTL layout, alignment, shelf order, and focus order.
+- Give every book and Add Book a localized semantic label and button role.
+- Use touch targets of at least 48dp.
+- Use accessible contrast through existing semantic tokens.
+- Support large text without page-level horizontal scrolling.
+- Do not convey meaning only through spine color, orientation, decoration, or motion.
+- Keep motion brief and functional.
+- Respect reduced-motion settings.
 
-1. Redirect the user to Discover.
-2. Open book search.
-3. Allow the user to find a book.
-4. Open Book Overview.
-5. Allow adding the book to Library.
+## 8. Performance and privacy
 
-Users do not directly add books to the global catalog.
+- Begin visible input feedback within 100 ms under normal load.
+- Build off-screen books lazily.
+- Keep scrolling responsive with a large local collection.
+- Never delay Library for catalog requests or image downloads.
+- Never upload personal Library data.
+- Do not include titles, authors, local IDs, or other personal metadata in production logs.
 
-They only add books to their personal Library.
+## 9. Future visual direction
 
----
+The supplied reference image is the long-term visual aspiration for Library: calm, warm, friendly, personal, and reminiscent of a physical reading space.
 
-# Personalization
+Future separately approved work may add:
 
-The Library should become more personal over time.
+- richer bookshelves;
+- environmental illustration;
+- plants and personal objects;
+- lighting and atmosphere;
+- personalization or earned decorations;
+- a more immersive room-like composition.
 
-Personalization may include:
+These are not MVP requirements, dependencies, or acceptance criteria.
 
-- Decorations.
-- Visual elements.
-- Achievements.
-- Reading milestones.
+The MVP should keep a simple structure—heading, shelf, book item, and Add Book action—so its presentation can become richer later without changing the PersonalBook domain model.
 
-These elements represent the user's progress and relationship with books.
+Do not create decoration models, progression services, theme infrastructure, or unused extension points now.
 
----
+The reference image’s bottom navigation, profile, notifications, and progress widgets are not design requirements. BookBite’s actual navigation remains authoritative.
 
-# Gamification Integration
+## 10. Acceptance criteria
 
-The Library supports lightweight gamification.
+### Active collection
 
-Gamification should:
+Given active and archived PersonalBooks, when Library opens online or offline, it shows only active books in newest-first order without making a catalog request.
 
-- Increase emotional connection.
-- Reward reading progress.
-- Make the Library feel unique.
+### Empty state
 
-Examples:
+Given no active PersonalBooks, when Library opens, it shows the welcoming empty state and Add Book action.
 
-- Earned decorations.
-- Library items.
-- Reading milestones.
+### Add Book
 
-Gamification should remain minimal and supportive.
+When Add Book is selected, Library opens Discover Active Search with an empty, focused search field.
 
-It should never distract from reading.
+### Reactive updates
 
----
+When another approved workflow creates or archives a PersonalBook, the shelf updates from local storage without a network refresh.
 
-# Environmental Experience
+### Book selection
 
-The Library should feel like a living personal space.
+When a book is selected once, Library provides immediate feedback and invokes the PersonalBook Detail route once with the correct local ID.
 
-Future implementations may include:
+### Error recovery
 
-- Time-based atmosphere changes.
-- Different lighting based on time of day.
-- Ambient elements.
-- Seasonal or earned decorations.
+When the local query fails and Retry later succeeds, Library displays the recovered collection without changing stored data.
 
-These elements exist to strengthen the feeling of ownership and personal connection.
+### Restoration
 
-They are not the primary purpose of the Library.
+When the reader returns to Library, the prior valid scroll position is restored.
 
----
+### Navigation ownership
 
-# Book Opening Interaction
+In every Library state, the existing bottom navigation and global capture controls remain unchanged and no duplicate navigation is rendered.
 
-Selecting a book should create a meaningful transition.
+### Inclusive use
 
-The interaction should feel similar to opening a physical book.
+English, Persian, large text, reduced motion, and screen-reader users can understand and activate every book and action without relying on the visual spine treatment.
 
-The experience should be:
+## 11. Verification
 
-- Natural.
-- Calm.
-- Satisfying.
-- Fast.
+Test:
 
-The transition should communicate that the user is entering the personal space of that book.
+- active-only filtering and newest-first ordering;
+- loading, empty, populated, and error states;
+- reactive creation and archiving updates;
+- Add Book navigation;
+- PersonalBook route handoff;
+- long titles and long-list scrolling;
+- offline behavior;
+- scroll restoration;
+- English LTR and Persian RTL;
+- semantics, focus order, 48dp targets, contrast, and large text;
+- reduced motion;
+- absence of catalog requests and personal metadata in logs.
 
----
+Tests use local fakes and fixtures and never depend on live Open Library.
 
-# Empty State
+## 12. Completion gate
 
-A new user's Library should contain no books.
+The Library MVP is complete when:
 
-The empty state should:
-
-- Feel welcoming.
-- Encourage the first action.
-- Communicate future growth.
-
-The empty Library represents potential, not absence.
-
----
-
-# States
-
-## Empty Library
-
-No books have been added.
-
-Expected behavior:
-
-- Show empty bookshelf.
-- Encourage adding the first book.
-
----
-
-## Library With Books
-
-Display:
-
-- Bookshelf.
-- Personal decorations.
-- User progress elements.
-
----
-
-## Loading State
-
-Loading should feel immediate.
-
-Avoid blocking the entire experience.
-
----
-
-## Error State
-
-Errors should provide:
-
-- Clear explanation.
-- Recovery action.
-- No loss of user data.
-
----
-
-# Dependencies
-
-Library depends on:
-
-- Book Library Management.
-- Book Overview.
-- My Book.
-- Gamification system.
-- User profile data.
-
----
-
-# Future Considerations
-
-Possible future additions:
-
-- Multiple bookshelf themes.
-- Custom decoration placement.
-- Room customization.
-- Sharing Library previews.
-- Social reading spaces.
+- all acceptance criteria pass;
+- local books remain available offline;
+- Add Book and PersonalBook route handoffs are verified;
+- the existing app shell and capture behavior remain unchanged;
+- accessibility, localization, restoration, and privacy are verified;
+- no progression, decoration system, PersonalBook Detail UI, or other deferred feature is implemented as part of Library.
