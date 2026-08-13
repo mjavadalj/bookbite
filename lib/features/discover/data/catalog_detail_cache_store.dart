@@ -30,7 +30,7 @@ class CatalogDetailCacheStore {
       try {
         final payload = jsonDecode(row.payload);
         if (payload is! Map<Object?, Object?>) continue;
-        result[row.cacheKey] = CachedCatalogDetail(
+        final entry = CachedCatalogDetail(
           detail: _detailFromJson(payload['detail']),
           related: _booksFromJson(payload['related']),
           lastAccess: DateTime.fromMillisecondsSinceEpoch(
@@ -38,7 +38,8 @@ class CatalogDetailCacheStore {
             isUtc: true,
           ),
         );
-      } on FormatException {
+        result[row.cacheKey] = entry;
+      } on Object {
         // A malformed disposable entry does not affect other entries.
       }
     }
@@ -107,18 +108,18 @@ class CatalogDetailCacheStore {
     return CatalogBookDetail(
       provider: provider,
       id: id,
-      workId: raw['workId'] as String?,
+      workId: _nullableString(raw['workId']),
       title: title,
       authors: _strings(raw['authors']),
-      coverUrl: Uri.tryParse(raw['coverUrl'] as String? ?? ''),
-      description: raw['description'] as String?,
+      coverUrl: _uri(raw['coverUrl']),
+      description: _nullableString(raw['description']),
       subjects: _strings(raw['subjects']),
-      publicationDate: raw['publicationDate'] as String?,
-      firstPublishedYear: raw['firstPublishedYear'] as int?,
-      edition: raw['edition'] as String?,
-      language: raw['language'] as String?,
-      originalLanguage: raw['originalLanguage'] as String?,
-      pageCount: raw['pageCount'] as int?,
+      publicationDate: _nullableString(raw['publicationDate']),
+      firstPublishedYear: _nullableInt(raw['firstPublishedYear']),
+      edition: _nullableString(raw['edition']),
+      language: _nullableString(raw['language']),
+      originalLanguage: _nullableString(raw['originalLanguage']),
+      pageCount: _nullableInt(raw['pageCount']),
       isbn10: _strings(raw['isbn10']),
       isbn13: _strings(raw['isbn13']),
       fetchedAt: DateTime.parse(fetchedAt).toUtc(),
@@ -140,13 +141,13 @@ class CatalogDetailCacheStore {
       provider: provider,
       id: id,
       title: title,
-      workId: raw['workId'] as String?,
+      workId: _nullableString(raw['workId']),
       authors: _strings(raw['authors']),
-      edition: raw['edition'] as String?,
-      language: raw['language'] as String?,
-      firstPublishedYear: raw['firstPublishedYear'] as int?,
+      edition: _nullableString(raw['edition']),
+      language: _nullableString(raw['language']),
+      firstPublishedYear: _nullableInt(raw['firstPublishedYear']),
       isbns: _strings(raw['isbns']),
-      coverUrl: Uri.tryParse(raw['coverUrl'] as String? ?? ''),
+      coverUrl: _uri(raw['coverUrl']),
     );
   }
 
@@ -165,4 +166,10 @@ class CatalogDetailCacheStore {
 
   List<String> _strings(Object? raw) =>
       raw is List ? raw.whereType<String>().toList() : const [];
+
+  String? _nullableString(Object? raw) => raw is String ? raw : null;
+
+  int? _nullableInt(Object? raw) => raw is int ? raw : null;
+
+  Uri? _uri(Object? raw) => raw is String ? Uri.tryParse(raw) : null;
 }

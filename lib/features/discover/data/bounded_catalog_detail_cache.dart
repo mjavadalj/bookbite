@@ -20,7 +20,7 @@ class CatalogDetailCache {
     final updated = CachedCatalogDetail(
       detail: entry.detail,
       related: entry.related,
-      lastAccess: now().toUtc(),
+      lastAccess: _nextAccessTime(),
     );
     _entries[key] = updated;
     await _persist();
@@ -35,10 +35,20 @@ class CatalogDetailCache {
     _entries[detail.identity] = CachedCatalogDetail(
       detail: detail,
       related: related,
-      lastAccess: now().toUtc(),
+      lastAccess: _nextAccessTime(),
     );
     _evict();
     await _persist();
+  }
+
+  DateTime _nextAccessTime() {
+    var timestamp = now().toUtc();
+    for (final entry in _entries.values) {
+      if (!timestamp.isAfter(entry.lastAccess)) {
+        timestamp = entry.lastAccess.add(const Duration(milliseconds: 1));
+      }
+    }
+    return timestamp;
   }
 
   bool isFresh(CachedCatalogDetail entry) =>

@@ -1,6 +1,6 @@
 # BookBite MVP Delivery Roadmap
 
-**Last verified:** 2026-08-10
+**Last verified:** 2026-08-13
 
 ## Purpose
 
@@ -71,7 +71,7 @@ Every major capability must have an approved feature specification before implem
 ### Completion Gate
 
 - [x] The full-detail cache never retains more than five disposable detail records.
-- [ ] LRU eviction and offline detail behavior pass repository and integration tests.
+- [x] LRU eviction and offline detail behavior pass repository and integration tests.
 - [ ] Missing fields, missing covers, malformed responses, provider failure, restart, reduced motion, dynamic text, and RTL are verified.
 ## 4. Add to Personal Library
 
