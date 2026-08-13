@@ -75,24 +75,24 @@ Every major capability must have an approved feature specification before implem
 - [ ] Missing fields, missing covers, malformed responses, provider failure, restart, reduced motion, dynamic text, and RTL are verified.
 ## 4. Add to Personal Library
 
-- [ ] Finalize and approve the import and manual PersonalBook creation behavior in the relevant feature specification.
-- [ ] Add versioned Drift schemas for PersonalBook records and optional catalog provenance.
-- [ ] Store imported catalog metadata as a permanent local snapshot owned by the PersonalBook.
-- [ ] Implement PersonalBook domain and repository interfaces without coupling them to Open Library.
-- [ ] Import a CatalogBook transactionally using a stable local PersonalBook ID.
-- [ ] Make imports idempotent by provider and provider-specific edition ID.
-- [ ] Return the existing PersonalBook when the same provider edition has already been imported.
-- [ ] Allow a different edition or translation to become a separate PersonalBook.
-- [ ] Implement manual PersonalBook creation with a required title and no catalog dependency.
-- [ ] Keep the user on CatalogBook Detail after a successful import and show a confirmed saved state.
-- [ ] Make repeated Add actions safe and prevent duplicate records.
-- [ ] Defer the Library page and PersonalBook Detail page.
+- [x] Finalize the catalog-import behavior; keep manual PersonalBook creation deferred.
+- [x] Add versioned Drift schemas for PersonalBook records and optional catalog provenance.
+- [x] Store imported catalog metadata as a permanent local snapshot owned by the PersonalBook.
+- [x] Implement PersonalBook domain and repository interfaces without coupling them to Open Library.
+- [x] Import a CatalogBook transactionally using a stable local PersonalBook ID.
+- [x] Make imports idempotent by provider and provider-specific edition ID.
+- [x] Return the existing PersonalBook when the same provider edition has already been imported.
+- [x] Allow a different edition or translation to become a separate PersonalBook.
+- [ ] Implement manual PersonalBook creation with a required title and no catalog dependency. Deferred from this milestone slice.
+- [x] Keep the user on CatalogBook Detail after a successful import and show a confirmed saved state.
+- [x] Make repeated Add actions safe and prevent duplicate records.
+- [x] Defer the Library page and PersonalBook Detail page.
 
 ### Completion Gate
 
-- [ ] Imported and manually created PersonalBooks remain available after restart and without network access.
-- [ ] Import rollback prevents partial PersonalBook records after database or mapping failure.
-- [ ] Duplicate import, separate-edition import, offline creation, migration, and catalog-cache eviction scenarios are tested.
+- [x] Imported PersonalBooks remain available after restart and without network access.
+- [x] Import rollback prevents partial PersonalBook records after database or mapping failure.
+- [x] Duplicate import, separate-edition import, migration, and catalog-cache eviction scenarios are tested.
 
 ## 5. Reading Session, Bite, and OCR
 

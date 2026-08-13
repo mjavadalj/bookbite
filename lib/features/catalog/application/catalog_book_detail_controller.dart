@@ -4,6 +4,9 @@ import 'package:bookbite/features/discover/data/bounded_catalog_detail_cache.dar
 import 'package:bookbite/features/discover/domain/catalog_book.dart';
 import 'package:bookbite/features/discover/domain/catalog_book_detail.dart';
 import 'package:bookbite/features/discover/domain/catalog_repository.dart';
+import 'package:bookbite/features/library/application/import_catalog_book.dart';
+import 'package:bookbite/features/library/application/personal_book_providers.dart';
+import 'package:bookbite/features/library/domain/personal_book_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'catalog_book_detail_controller.g.dart';
@@ -11,6 +14,8 @@ part 'catalog_book_detail_controller.g.dart';
 enum CatalogDetailStatus { loading, data, refreshing, offline, failure }
 
 enum CatalogRelatedStatus { idle, loading, data, failure }
+
+enum PersonalBookSaveStatus { checking, notSaved, saving, saved, failure }
 
 class CatalogBookDetailState {
   const CatalogBookDetailState({
@@ -21,6 +26,8 @@ class CatalogBookDetailState {
     this.failure,
     this.relatedFailure,
     this.fromCache = false,
+    this.saveStatus = PersonalBookSaveStatus.checking,
+    this.personalBookId,
   });
 
   final CatalogBookDetail? detail;
@@ -30,6 +37,8 @@ class CatalogBookDetailState {
   final CatalogFailure? failure;
   final CatalogFailure? relatedFailure;
   final bool fromCache;
+  final PersonalBookSaveStatus saveStatus;
+  final String? personalBookId;
 
   bool get hasContent => detail != null;
   bool get isOffline =>
@@ -46,6 +55,8 @@ class CatalogBookDetailState {
     CatalogFailure? relatedFailure,
     bool clearRelatedFailure = false,
     bool? fromCache,
+    PersonalBookSaveStatus? saveStatus,
+    String? personalBookId,
   }) => CatalogBookDetailState(
     detail: detail ?? this.detail,
     related: related ?? this.related,
@@ -56,6 +67,8 @@ class CatalogBookDetailState {
         ? null
         : relatedFailure ?? this.relatedFailure,
     fromCache: fromCache ?? this.fromCache,
+    saveStatus: saveStatus ?? this.saveStatus,
+    personalBookId: personalBookId ?? this.personalBookId,
   );
 }
 
@@ -63,6 +76,8 @@ class CatalogBookDetailState {
 class CatalogBookDetailController extends _$CatalogBookDetailController {
   late final CatalogRepository _repository;
   late final CatalogDetailCache _cache;
+  late final PersonalBookRepository _personalBooks;
+  late final ImportCatalogBook _importCatalogBook;
   bool _disposed = false;
   String? _origin;
   int _requestId = 0;
@@ -74,6 +89,8 @@ class CatalogBookDetailController extends _$CatalogBookDetailController {
     _cache = CatalogDetailCache(
       store: ref.read(catalogDetailCacheStoreProvider),
     );
+    _personalBooks = ref.read(personalBookRepositoryProvider);
+    _importCatalogBook = ref.read(importCatalogBookProvider);
     ref.onDispose(() => _disposed = true);
     return const CatalogBookDetailState();
   }
@@ -87,6 +104,9 @@ class CatalogBookDetailController extends _$CatalogBookDetailController {
       );
       return;
     }
+
+    await _loadSavedState(request);
+    if (_disposed || request != _requestId) return;
 
     final cached = await _cache.read('$provider:$id');
     if (_disposed || request != _requestId) return;
@@ -105,6 +125,11 @@ class CatalogBookDetailController extends _$CatalogBookDetailController {
         clearRelatedFailure: true,
         fromCache: true,
       );
+      await _loadSavedState(
+        request,
+        bookId: cached.detail.editionId ?? cached.detail.id,
+      );
+      if (_disposed || request != _requestId) return;
       if (fresh && !forceRefresh) return;
     } else {
       state = state.copyWith(
@@ -131,6 +156,7 @@ class CatalogBookDetailController extends _$CatalogBookDetailController {
         clearFailure: true,
         fromCache: false,
       );
+      await _loadSavedState(request, bookId: detail.editionId ?? detail.id);
       if (_disposed || request != _requestId) return;
       await _cache.write(detail);
       if (_disposed || request != _requestId) return;
@@ -169,6 +195,46 @@ class CatalogBookDetailController extends _$CatalogBookDetailController {
   }
 
   Future<void> retry(String language) => load(language, forceRefresh: true);
+
+  Future<void> addToLibrary() async {
+    final detail = state.detail;
+    if (detail == null ||
+        state.saveStatus == PersonalBookSaveStatus.saving ||
+        state.saveStatus == PersonalBookSaveStatus.saved) {
+      return;
+    }
+    state = state.copyWith(saveStatus: PersonalBookSaveStatus.saving);
+    try {
+      final personalBook = await _importCatalogBook(detail);
+      if (_disposed) return;
+      state = state.copyWith(
+        saveStatus: PersonalBookSaveStatus.saved,
+        personalBookId: personalBook.id,
+      );
+    } on Object {
+      if (_disposed) return;
+      state = state.copyWith(saveStatus: PersonalBookSaveStatus.failure);
+    }
+  }
+
+  Future<void> _loadSavedState(int request, {String? bookId}) async {
+    try {
+      final existing = await _personalBooks.findByCatalogIdentity(
+        provider: provider,
+        bookId: bookId ?? id,
+      );
+      if (_disposed || request != _requestId) return;
+      state = state.copyWith(
+        saveStatus: existing == null
+            ? PersonalBookSaveStatus.notSaved
+            : PersonalBookSaveStatus.saved,
+        personalBookId: existing?.id,
+      );
+    } on Object {
+      if (_disposed || request != _requestId) return;
+      state = state.copyWith(saveStatus: PersonalBookSaveStatus.failure);
+    }
+  }
 
   bool _validRoute(String provider, String id, String? origin) =>
       provider == 'openLibrary' &&

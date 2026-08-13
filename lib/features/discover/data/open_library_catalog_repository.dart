@@ -135,6 +135,7 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
         workId ??
         _keyFromReferences(edition['works']) ??
         (id.endsWith('W') ? id : null);
+    final mappedEditionId = id.endsWith('M') ? id : _catalogKey(edition['key']);
     final authors = await _authors(edition['authors'] ?? work['authors']);
     final covers = _ints(edition['covers']);
     final workCovers = _ints(work['covers']);
@@ -155,6 +156,9 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
     return CatalogBookDetail(
       provider: provider,
       id: id,
+      editionId: mappedEditionId?.endsWith('M') == true
+          ? mappedEditionId
+          : null,
       workId: resolvedWorkId,
       title: title,
       authors: authors,

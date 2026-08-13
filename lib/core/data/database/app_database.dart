@@ -26,7 +26,33 @@ class CatalogCacheEntries extends Table {
   Set<Column<Object>> get primaryKey => {cacheKey};
 }
 
-@DriftDatabase(tables: [CatalogCacheEntries, CatalogDetailCacheEntries])
+class PersonalBookEntries extends Table {
+  @override
+  String get tableName => 'personal_books';
+
+  TextColumn get id => text()();
+  TextColumn get title => text()();
+  TextColumn get authorsJson => text()();
+  TextColumn get snapshotJson => text()();
+  TextColumn get catalogProvider => text().nullable()();
+  TextColumn get catalogBookId => text().nullable()();
+  TextColumn get catalogWorkId => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get archivedAt => integer().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {catalogProvider, catalogBookId},
+  ];
+}
+
+@DriftDatabase(
+  tables: [CatalogCacheEntries, CatalogDetailCacheEntries, PersonalBookEntries],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
@@ -43,13 +69,14 @@ class AppDatabase extends _$AppDatabase {
   factory AppDatabase.memory() => AppDatabase(NativeDatabase.memory());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) => migrator.createAll(),
     onUpgrade: (migrator, from, to) async {
       if (from < 2) await migrator.createTable(catalogDetailCacheEntries);
+      if (from < 3) await migrator.createTable(personalBookEntries);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

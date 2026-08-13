@@ -74,6 +74,7 @@ class CatalogDetailCacheStore {
   Map<String, Object?> _detailToJson(CatalogBookDetail detail) => {
     'provider': detail.provider,
     'id': detail.id,
+    'editionId': detail.editionId,
     'workId': detail.workId,
     'title': detail.title,
     'authors': detail.authors,
@@ -108,6 +109,7 @@ class CatalogDetailCacheStore {
     return CatalogBookDetail(
       provider: provider,
       id: id,
+      editionId: _nullableString(raw['editionId']),
       workId: _nullableString(raw['workId']),
       title: title,
       authors: _strings(raw['authors']),

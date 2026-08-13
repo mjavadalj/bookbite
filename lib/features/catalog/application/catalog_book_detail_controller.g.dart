@@ -62,7 +62,7 @@ final class CatalogBookDetailControllerProvider
 }
 
 String _$catalogBookDetailControllerHash() =>
-    r'77f666e07c569f966f498920bb8aac297dc76f7f';
+    r'7f5e970562c247d45ba0c2315b3582ed024443a8';
 
 final class CatalogBookDetailControllerFamily extends $Family
     with

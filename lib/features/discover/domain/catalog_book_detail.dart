@@ -6,6 +6,7 @@ class CatalogBookDetail {
     required this.id,
     required this.title,
     required this.fetchedAt,
+    this.editionId,
     this.workId,
     this.authors = const [],
     this.coverUrl,
@@ -23,6 +24,7 @@ class CatalogBookDetail {
 
   final String provider;
   final String id;
+  final String? editionId;
   final String? workId;
   final String title;
   final List<String> authors;

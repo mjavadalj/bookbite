@@ -99,6 +99,7 @@ class _CatalogBookDetailPageState extends ConsumerState<CatalogBookDetailPage>
     final state = ref.watch(provider);
     void retry() =>
         ref.read(provider.notifier).retry(strings.locale.languageCode);
+    void addToLibrary() => ref.read(provider.notifier).addToLibrary();
     if (!state.hasContent) return _StateView(state: state, retry: retry);
 
     final detail = state.detail!;
@@ -113,7 +114,8 @@ class _CatalogBookDetailPageState extends ConsumerState<CatalogBookDetailPage>
                 child: _Hero(
                   detail: detail,
                   addKey: _bodyAddKey,
-                  onAdd: () => _comingSoon(context),
+                  saveStatus: state.saveStatus,
+                  onAdd: addToLibrary,
                 ),
               ),
               if (state.fromCache ||
@@ -152,7 +154,12 @@ class _CatalogBookDetailPageState extends ConsumerState<CatalogBookDetailPage>
               const SliverToBoxAdapter(child: SizedBox(height: 48)),
             ],
           ),
-          _PinnedHeader(visible: _collapsed, detail: detail),
+          _PinnedHeader(
+            visible: _collapsed,
+            detail: detail,
+            saveStatus: state.saveStatus,
+            onAdd: addToLibrary,
+          ),
         ],
       ),
     );
@@ -163,10 +170,12 @@ class _Hero extends StatelessWidget {
   const _Hero({
     required this.detail,
     required this.addKey,
+    required this.saveStatus,
     required this.onAdd,
   });
   final CatalogBookDetail detail;
   final Key addKey;
+  final PersonalBookSaveStatus saveStatus;
   final VoidCallback onAdd;
 
   @override
@@ -250,18 +259,24 @@ class _Hero extends StatelessWidget {
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
+              child: _AddToLibraryButton(
                 key: addKey,
+                status: saveStatus,
                 onPressed: onAdd,
-                icon: const Icon(Icons.library_add_outlined),
-                label: Text(strings.addToLibrary),
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              strings.metadataSavedHelper,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _saveHelper(strings, saveStatus),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: saveStatus == PersonalBookSaveStatus.failure
+                      ? Theme.of(context).colorScheme.error
+                      : null,
+                ),
+              ),
             ),
             const SizedBox(height: 24),
             const Divider(height: 1, color: BookBiteTokens.border),
@@ -584,9 +599,16 @@ class _MissingCover extends StatelessWidget {
 }
 
 class _PinnedHeader extends StatelessWidget {
-  const _PinnedHeader({required this.visible, required this.detail});
+  const _PinnedHeader({
+    required this.visible,
+    required this.detail,
+    required this.saveStatus,
+    required this.onAdd,
+  });
   final bool visible;
   final CatalogBookDetail detail;
+  final PersonalBookSaveStatus saveStatus;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -656,9 +678,9 @@ class _PinnedHeader extends StatelessWidget {
                               ],
                             ),
                           ),
-                          TextButton(
-                            onPressed: () => _comingSoon(context),
-                            child: Text(strings.compactAdd),
+                          _CompactAddButton(
+                            status: saveStatus,
+                            onPressed: onAdd,
                           ),
                         ],
                       ),
@@ -720,13 +742,6 @@ class _StateView extends StatelessWidget {
                 onPressed: retry,
                 icon: const Icon(Icons.refresh_rounded),
                 label: Text(strings.retry),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () =>
-                    const ManualBookDestinationRoute().push<void>(context),
-                icon: const Icon(Icons.auto_stories_outlined),
-                label: Text(strings.manualCreateTitle),
               ),
               const Spacer(),
             ],
@@ -802,9 +817,111 @@ TextDirection _direction(String text) =>
     ? TextDirection.rtl
     : TextDirection.ltr;
 
-void _comingSoon(BuildContext context) {
-  final message = BookBiteLocalizations.of(context).addComingLater;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-  );
+class _AddToLibraryButton extends StatelessWidget {
+  const _AddToLibraryButton({
+    required this.status,
+    required this.onPressed,
+    super.key,
+  });
+
+  final PersonalBookSaveStatus status;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = BookBiteLocalizations.of(context);
+    final waiting =
+        status == PersonalBookSaveStatus.checking ||
+        status == PersonalBookSaveStatus.saving;
+    final saved = status == PersonalBookSaveStatus.saved;
+    return Semantics(
+      liveRegion: true,
+      child: FilledButton.icon(
+        style: saved
+            ? FilledButton.styleFrom(
+                disabledBackgroundColor: Theme.of(context).colorScheme.primary,
+                disabledForegroundColor: Theme.of(
+                  context,
+                ).colorScheme.onPrimary,
+              )
+            : null,
+        onPressed: waiting || saved ? null : onPressed,
+        icon: waiting
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Icon(
+                saved
+                    ? Icons.check_circle_outline_rounded
+                    : status == PersonalBookSaveStatus.failure
+                    ? Icons.refresh_rounded
+                    : Icons.library_add_outlined,
+              ),
+        label: Text(
+          status == PersonalBookSaveStatus.saving
+              ? strings.savingToLibrary
+              : saved
+              ? strings.savedState
+              : status == PersonalBookSaveStatus.failure
+              ? strings.tryAddAgain
+              : strings.addToLibrary,
+        ),
+      ),
+    );
+  }
 }
+
+class _CompactAddButton extends StatelessWidget {
+  const _CompactAddButton({required this.status, required this.onPressed});
+
+  final PersonalBookSaveStatus status;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = BookBiteLocalizations.of(context);
+    final waiting =
+        status == PersonalBookSaveStatus.checking ||
+        status == PersonalBookSaveStatus.saving;
+    final saved = status == PersonalBookSaveStatus.saved;
+    return TextButton.icon(
+      style: saved
+          ? TextButton.styleFrom(
+              disabledForegroundColor: Theme.of(context).colorScheme.primary,
+            )
+          : null,
+      onPressed: waiting || saved ? null : onPressed,
+      icon: waiting
+          ? const SizedBox.square(
+              dimension: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              saved
+                  ? Icons.check_circle_outline_rounded
+                  : status == PersonalBookSaveStatus.failure
+                  ? Icons.refresh_rounded
+                  : Icons.library_add_outlined,
+            ),
+      label: Text(
+        status == PersonalBookSaveStatus.saving
+            ? strings.savingShort
+            : saved
+            ? strings.savedState
+            : status == PersonalBookSaveStatus.failure
+            ? strings.retry
+            : strings.compactAdd,
+      ),
+    );
+  }
+}
+
+String _saveHelper(
+  BookBiteLocalizations strings,
+  PersonalBookSaveStatus status,
+) => switch (status) {
+  PersonalBookSaveStatus.saved => strings.savedOfflineHelper,
+  PersonalBookSaveStatus.failure => strings.addToLibraryFailed,
+  _ => strings.metadataSavedHelper,
+};
