@@ -11,6 +11,11 @@ List<RouteBase> get $appRoutes => [
   $activeSearchRoute,
   $catalogBookDestinationRoute,
   $manualBookDestinationRoute,
+  $personalBookDetailRoute,
+  $bookBitesRoute,
+  $sessionBitesRoute,
+  $readingSessionCaptureRoute,
+  $readingSessionVoiceCaptureRoute,
 ];
 
 RouteBase get $appShellRoute => ShellRouteData.$route(
@@ -214,6 +219,155 @@ mixin $ManualBookDestinationRoute on GoRouteData {
     '/manual-book',
     queryParams: {if (_self.query != null) 'query': _self.query},
   );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $personalBookDetailRoute => GoRouteData.$route(
+  path: '/library/book/:personalBookId',
+  factory: $PersonalBookDetailRoute._fromState,
+);
+
+mixin $PersonalBookDetailRoute on GoRouteData {
+  static PersonalBookDetailRoute _fromState(GoRouterState state) =>
+      PersonalBookDetailRoute(
+        personalBookId: state.pathParameters['personalBookId']!,
+      );
+
+  PersonalBookDetailRoute get _self => this as PersonalBookDetailRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/library/book/${Uri.encodeComponent(_self.personalBookId)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $bookBitesRoute => GoRouteData.$route(
+  path: '/library/book/:personalBookId/bites',
+  factory: $BookBitesRoute._fromState,
+);
+
+mixin $BookBitesRoute on GoRouteData {
+  static BookBitesRoute _fromState(GoRouterState state) => BookBitesRoute(
+    personalBookId: state.pathParameters['personalBookId']!,
+    title: state.uri.queryParameters['title'],
+  );
+
+  BookBitesRoute get _self => this as BookBitesRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/library/book/${Uri.encodeComponent(_self.personalBookId)}/bites',
+    queryParams: {if (_self.title != null) 'title': _self.title},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $sessionBitesRoute => GoRouteData.$route(
+  path: '/reading-session/:sessionId/bites',
+  factory: $SessionBitesRoute._fromState,
+);
+
+mixin $SessionBitesRoute on GoRouteData {
+  static SessionBitesRoute _fromState(GoRouterState state) =>
+      SessionBitesRoute(sessionId: state.pathParameters['sessionId']!);
+
+  SessionBitesRoute get _self => this as SessionBitesRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/reading-session/${Uri.encodeComponent(_self.sessionId)}/bites',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $readingSessionCaptureRoute => GoRouteData.$route(
+  path: '/reading-session/capture/photo',
+  factory: $ReadingSessionCaptureRoute._fromState,
+);
+
+mixin $ReadingSessionCaptureRoute on GoRouteData {
+  static ReadingSessionCaptureRoute _fromState(GoRouterState state) =>
+      const ReadingSessionCaptureRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/reading-session/capture/photo');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $readingSessionVoiceCaptureRoute => GoRouteData.$route(
+  path: '/reading-session/capture/voice',
+  factory: $ReadingSessionVoiceCaptureRoute._fromState,
+);
+
+mixin $ReadingSessionVoiceCaptureRoute on GoRouteData {
+  static ReadingSessionVoiceCaptureRoute _fromState(GoRouterState state) =>
+      const ReadingSessionVoiceCaptureRoute();
+
+  @override
+  String get location =>
+      GoRouteData.$location('/reading-session/capture/voice');
 
   @override
   void go(BuildContext context) => context.go(location);

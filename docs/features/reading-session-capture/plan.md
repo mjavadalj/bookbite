@@ -1,6 +1,6 @@
 # Step 5 Documentation and Future Implementation Plan
 
-**Status:** Proposed
+**Status:** In progress — Step 5 prototype implemented; ship gate open
 **Last updated:** 2026-08-18
 
 ## 1. Purpose
@@ -85,10 +85,10 @@ After both specifications are Approved:
 2. Add the versioned Drift migration, constraints, repositories, and migration/failure tests.
 3. Add managed-media validation and reconciliation.
 4. Add application use cases and Riverpod controllers for session lifecycle and capture commit.
-5. Add the camera adapter and four page states using approximate shared styling.
-6. Add persistent OCR jobs and the isolated Tesseract 5 adapter.
-7. Add English/Persian trained data only after versions, checksums, licenses, size, and benchmarks are recorded.
-8. Complete widget, integration, accessibility, restart-recovery, corpus, and device verification.
+5. Add the camera adapter, four page states, the background OCR job runner, and the isolated Tesseract 5 adapter with bundled English/Persian trained data. Image-to-text OCR is part of Step 5; it starts after durable photo confirmation and does not block navigation.
+6. Add Voice capture and speech-to-text. Voice remains visible but disabled until this step.
+7. Complete the persistent Drift job/session/media migration, restart reconciliation, and durable OCR status/retry wiring around the Step 5 contracts.
+8. Complete widget, integration, accessibility, restart-recovery, corpus, and physical-device verification.
 
 ## 6. Verification and Approval Gates
 
@@ -103,7 +103,33 @@ Approval requires:
 
 Implementation completion later requires every acceptance criterion in both specifications, successful version-3 migration coverage, the approved OCR corpus thresholds, and data-preservation verification across cancellation, failure, and restart.
 
-## 7. Cross-Specification Review Record
+## 7. Step 5 Implementation Checklist
+
+This checklist records the current repository state. A checked prototype item is not a release approval; the ship gate remains open until the unchecked durability and device-verification items are complete.
+
+### Implemented in the current Step 5 slice
+
+- [x] Idle, selected-book confirmation, active-session, and camera/review page states.
+- [x] `/reading-session/capture/photo` route pushed above the reading-session context.
+- [x] Camera adapter, Android camera permission, review, Retake, Use photo, and disabled Gallery/camera-switch controls.
+- [x] Local Tesseract adapter with bundled English (`eng`) and Persian (`fas`) trained data.
+- [x] Single-worker background OCR queue with queued, processing, ready, failed, duplicate protection, and retry.
+- [x] Active-session Bite cards showing OCR status and extracted text after returning from capture.
+- [x] Localized OCR status and recovery labels plus OCR runner unit coverage.
+
+### Remaining before Step 5 is shippable
+
+- [ ] Drift records for ReadingSession, Bite, managed media, and extraction jobs, including migration and constraints.
+- [ ] Durable managed-image persistence, path/dimension validation, orphan reconciliation, and source retention.
+- [ ] Capture-created unassigned sessions, active-session reuse, assignment inheritance, and restart restoration.
+- [ ] Persisted OCR status/text, retry after process restart, and idempotent durable capture confirmation.
+- [ ] Widget/integration/accessibility coverage for camera, review, OCR status, retry, RTL, large text, and process recovery.
+- [ ] Physical-device Android camera/OCR verification, pinned model provenance, corpus CER results, and performance measurements.
+- [ ] Successful debug/release APK build and real-device smoke test.
+
+The Reading Session and Capture Bite acceptance checklists remain authoritative: the implemented items above support RS-06 and parts of RS-08/CB-02/CB-07/CB-08, but no RS/CB criterion is marked complete until its persistence, recovery, and verification requirements pass.
+
+## 8. Cross-Specification Review Record
 
 ### Architecture
 

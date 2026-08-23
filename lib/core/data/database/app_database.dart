@@ -50,8 +50,106 @@ class PersonalBookEntries extends Table {
   ];
 }
 
+class ReadingCycleEntries extends Table {
+  @override
+  String get tableName => 'reading_cycles';
+
+  TextColumn get id => text()();
+  TextColumn get personalBookId =>
+      text().references(PersonalBookEntries, #id)();
+  TextColumn get status => text()();
+  IntColumn get startedAt => integer()();
+  IntColumn get endedAt => integer().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ReadingSessionEntries extends Table {
+  @override
+  String get tableName => 'reading_sessions';
+
+  TextColumn get id => text()();
+  IntColumn get startedAt => integer()();
+  IntColumn get endedAt => integer().nullable()();
+  TextColumn get personalBookId =>
+      text().nullable().references(PersonalBookEntries, #id)();
+  TextColumn get readingCycleId =>
+      text().nullable().references(ReadingCycleEntries, #id)();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class BiteEntries extends Table {
+  @override
+  String get tableName => 'bites';
+
+  TextColumn get id => text()();
+  TextColumn get sourceKind => text()();
+  TextColumn get extractionStatus => text()();
+  TextColumn get extractedText => text().nullable()();
+  TextColumn get tagsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get readingSessionId =>
+      text().nullable().references(ReadingSessionEntries, #id)();
+  TextColumn get personalBookId =>
+      text().nullable().references(PersonalBookEntries, #id)();
+  TextColumn get readingCycleId =>
+      text().nullable().references(ReadingCycleEntries, #id)();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ManagedMediaEntries extends Table {
+  @override
+  String get tableName => 'managed_media';
+
+  TextColumn get id => text()();
+  TextColumn get biteId => text().unique().references(BiteEntries, #id)();
+  TextColumn get kind => text()();
+  TextColumn get reference => text()();
+  IntColumn get byteSize => integer()();
+  IntColumn get createdAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ExtractionJobEntries extends Table {
+  @override
+  String get tableName => 'extraction_jobs';
+
+  TextColumn get id => text()();
+  TextColumn get biteId => text().unique().references(BiteEntries, #id)();
+  TextColumn get kind => text()();
+  TextColumn get status => text()();
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+  TextColumn get errorCode => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 @DriftDatabase(
-  tables: [CatalogCacheEntries, CatalogDetailCacheEntries, PersonalBookEntries],
+  tables: [
+    CatalogCacheEntries,
+    CatalogDetailCacheEntries,
+    PersonalBookEntries,
+    ReadingCycleEntries,
+    ReadingSessionEntries,
+    BiteEntries,
+    ManagedMediaEntries,
+    ExtractionJobEntries,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
@@ -69,7 +167,7 @@ class AppDatabase extends _$AppDatabase {
   factory AppDatabase.memory() => AppDatabase(NativeDatabase.memory());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -77,9 +175,27 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (migrator, from, to) async {
       if (from < 2) await migrator.createTable(catalogDetailCacheEntries);
       if (from < 3) await migrator.createTable(personalBookEntries);
+      if (from < 4) {
+        await migrator.createTable(readingCycleEntries);
+        await migrator.createTable(readingSessionEntries);
+        await migrator.createTable(biteEntries);
+        await migrator.createTable(managedMediaEntries);
+        await migrator.createTable(extractionJobEntries);
+        await customStatement(
+          'CREATE UNIQUE INDEX IF NOT EXISTS one_active_reading_session '
+          'ON reading_sessions ((1)) WHERE ended_at IS NULL',
+        );
+      }
+      if (from < 5) {
+        await migrator.addColumn(biteEntries, biteEntries.tagsJson);
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      await customStatement(
+        'CREATE UNIQUE INDEX IF NOT EXISTS one_active_reading_session '
+        'ON reading_sessions ((1)) WHERE ended_at IS NULL',
+      );
     },
   );
 }

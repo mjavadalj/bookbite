@@ -42,7 +42,7 @@ Open Library is the initial catalog provider and must remain replaceable. Catalo
 
 The complete Bite workflow works offline from first launch:
 
-1. capture a physical-book page or record up to 30 seconds of the reader's voice;
+1. capture a physical-book page or record up to 5 seconds of the reader's voice;
 2. save the source image or voice recording durably;
 3. create a Bite with `captured` status;
 4. run free on-device OCR for an image or speech-to-text for a recording;
@@ -54,7 +54,7 @@ Text extraction may continue after capture. The user must be free to resume read
 
 English OCR is the primary release-quality target. Persian OCR is included as a secondary MVP priority. The OCR feature specification must define the required accuracy, latency, and test corpus.
 
-Voice transcription must work fully on-device in English and Persian. Recording stops automatically at 30 seconds. Denied microphone permission must leave photo capture and all existing data usable.
+Voice transcription must work fully on-device in English and Persian. Recording stops automatically at 5 seconds. Denied microphone permission must leave photo capture and all existing data usable.
 
 ### Reading Activity
 

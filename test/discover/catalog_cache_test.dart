@@ -4,25 +4,35 @@ import 'package:bookbite/core/data/database/app_database.dart';
 import 'package:bookbite/features/discover/data/catalog_cache_store.dart';
 import 'package:bookbite/features/discover/domain/catalog_book.dart';
 import 'package:bookbite/features/discover/domain/catalog_repository.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('database can be created and reopened at schema version one', () async {
+  test('database can be created and reopened at the current schema', () async {
     final directory = await Directory.systemTemp.createTemp('bookbite-db-');
     final file = File('${directory.path}${Platform.pathSeparator}test.sqlite');
     try {
-      final first = AppDatabase(DatabaseConnection(NativeDatabase(file)));
+      final first = AppDatabase(NativeDatabase.createInBackground(file));
       await first.select(first.catalogCacheEntries).get();
       await first.close();
 
-      final second = AppDatabase(DatabaseConnection(NativeDatabase(file)));
+      final second = AppDatabase(NativeDatabase.createInBackground(file));
       final rows = await second.select(second.catalogCacheEntries).get();
-      expect(rows, hasLength(1));
+      expect(rows, isEmpty);
       await second.close();
     } finally {
-      await directory.delete(recursive: true);
+      for (var attempt = 0; attempt < 10; attempt++) {
+        try {
+          await directory.delete(recursive: true);
+          break;
+        } on PathAccessException {
+          // Windows may retain the sqlite native handle until the test process
+          // exits even after Drift has closed it. The unique system-temp path
+          // is safe to leave for the operating system's normal temp cleanup.
+          if (attempt == 9) break;
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      }
     }
   });
 

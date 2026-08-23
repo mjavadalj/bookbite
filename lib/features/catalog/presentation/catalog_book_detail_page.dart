@@ -34,7 +34,7 @@ class _CatalogBookDetailPageState extends ConsumerState<CatalogBookDetailPage>
 
   @override
   String? get restorationId =>
-      'catalog_detail_' + widget.provider + '_' + widget.bookId;
+      'catalog_detail_${widget.provider}_${widget.bookId}';
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
@@ -417,7 +417,7 @@ class _Details extends StatelessWidget {
         children: rows
             .map(
               (row) => Semantics(
-                label: row.$1 + ', ' + row.$2,
+                label: '${row.$1}, ${row.$2}',
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Row(
@@ -510,7 +510,7 @@ class _RelatedState extends State<_Related> {
                     width: 132,
                     child: Semantics(
                       button: true,
-                      label: book.title + ', ' + authors,
+                      label: '${book.title}, $authors',
                       child: InkWell(
                         onTap: () => widget.onOpen(book),
                         borderRadius: BorderRadius.circular(16),

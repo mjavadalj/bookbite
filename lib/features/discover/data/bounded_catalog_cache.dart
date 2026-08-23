@@ -6,8 +6,7 @@ import 'package:bookbite/features/discover/data/catalog_cache_store.dart';
 /// intentionally independent of personal-book storage so eviction can never
 /// affect reader-owned data.
 class BoundedCatalogCache {
-  BoundedCatalogCache({CatalogCacheStore? store, this.now = DateTime.now})
-    : _store = store;
+  BoundedCatalogCache({this._store, this.now = DateTime.now});
 
   final CatalogCacheStore? _store;
   final DateTime Function() now;
@@ -36,8 +35,9 @@ class BoundedCatalogCache {
     final lower = query.toLowerCase();
     final all = <String, CatalogBook>{};
     for (final entry in _pages.values) {
-      for (final book in entry.page.books)
+      for (final book in entry.page.books) {
         all.putIfAbsent(book.identity, () => book);
+      }
     }
     return all.values.where(
       (book) =>

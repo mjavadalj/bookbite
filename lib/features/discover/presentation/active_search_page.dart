@@ -38,16 +38,18 @@ class _ActiveSearchPageState extends ConsumerState<ActiveSearchPage>
     _input.text = widget.initialQuery ?? '';
     _input.addListener(() => _restoredQuery.value = _input.text);
     _scroll.addListener(() {
-      if (_scroll.position.extentAfter < 600)
+      if (_scroll.position.extentAfter < 600) {
         ref.read(discoverControllerProvider.notifier).loadMoreSearch();
+      }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(discoverControllerProvider.notifier)
           .setLanguage(BookBiteLocalizations.of(context).locale.languageCode);
       _focus.requestFocus();
-      if (_input.text.isNotEmpty)
+      if (_input.text.isNotEmpty) {
         ref.read(discoverControllerProvider.notifier).updateSearch(_input.text);
+      }
     });
   }
 
@@ -193,27 +195,30 @@ class _SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = BookBiteLocalizations.of(context);
-    if (query.isEmpty && pending == null)
+    if (query.isEmpty && pending == null) {
       return _SearchMessage(
         message: strings.searchGuidance,
         onManual: onManual,
       );
+    }
     if (pending != null && query.isEmpty) {
       final message = pending!.runes.length < 3
           ? strings.typeMoreToSearch
           : strings.pendingSearch.replaceFirst('{query}', pending!);
       return _SearchMessage(message: message, onManual: onManual);
     }
-    if (section.status == CatalogStatus.loading && section.books.isEmpty)
+    if (section.status == CatalogStatus.loading && section.books.isEmpty) {
       return const Center(child: CircularProgressIndicator());
-    if (section.status == CatalogStatus.empty)
+    }
+    if (section.status == CatalogStatus.empty) {
       return _SearchMessage(
         message: strings.noMatches.replaceFirst('{query}', query),
         onManual: onManual,
       );
+    }
     if ((section.status == CatalogStatus.error ||
             section.status == CatalogStatus.offline) &&
-        section.books.isEmpty)
+        section.books.isEmpty) {
       return _SearchMessage(
         message: section.status == CatalogStatus.offline
             ? strings.liveSearchNeedsConnection
@@ -221,13 +226,14 @@ class _SearchResults extends StatelessWidget {
         onManual: onManual,
         onRetry: onRetry,
       );
+    }
     return ListView.separated(
       controller: controller,
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       itemCount: section.books.length + 2,
       separatorBuilder: (_, _) => const Divider(color: BookBiteTokens.border),
       itemBuilder: (context, index) {
-        if (index == 0)
+        if (index == 0) {
           return Text(
             section.hasSavedContent
                 ? strings.savedCatalog
@@ -238,7 +244,8 @@ class _SearchResults extends StatelessWidget {
               color: BookBiteTokens.secondaryText,
             ),
           );
-        if (index == section.books.length + 1)
+        }
+        if (index == section.books.length + 1) {
           return Column(
             children: [
               const SizedBox(height: 16),
@@ -253,6 +260,7 @@ class _SearchResults extends StatelessWidget {
                 ),
             ],
           );
+        }
         return _SearchRow(
           book: section.books[index - 1],
           query: query,

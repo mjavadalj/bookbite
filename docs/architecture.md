@@ -100,7 +100,7 @@ Text extraction runs outside the UI thread. Failure must not remove source media
 
 Opening the Reading Session destination performs no domain write. Manual Start creates a session only when none is active. Capture must not create a second active session.
 
-Voice recording is limited to 30 seconds and is transcribed after recording stops. Canceling or failing before durable capture completes creates no Bite or ReadingSession and removes any temporary or orphaned managed media. An interrupted recording may be saved only when valid audio can be finalized; otherwise the app must explain that it was not saved.
+Voice recording is limited to 5 seconds and is transcribed after recording stops. Canceling or failing before durable capture completes creates no Bite or ReadingSession and removes any temporary or orphaned managed media. An interrupted recording may be saved only when valid audio can be finalized; otherwise the app must explain that it was not saved.
 
 ## Reactive Data Flow
 

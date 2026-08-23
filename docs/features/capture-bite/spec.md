@@ -1,6 +1,6 @@
 # Feature Specification: Capture Bite — Page Image and OCR
 
-**Status:** Proposed
+**Status:** Approved
 **Last updated:** 2026-08-18
 
 ## 1. Purpose
@@ -23,6 +23,7 @@ This specification owns page-image Bites only. Voice capture remains owned by St
 - background Tesseract 5 OCR for printed English and Persian;
 - persistent status, restart recovery, compact failed-state Retry;
 - source retention, cleanup, and reconciliation;
+- editable extracted text that persists independently of source media;
 - offline, privacy, accessibility, quality, and performance verification.
 
 ### Out of scope
@@ -31,7 +32,7 @@ This specification owns page-image Bites only. Voice capture remains owned by St
 - functional camera switching or Gallery import;
 - automatic crop, dewarp, blur scoring, or enhancement controls;
 - handwriting, marginalia, tables, mathematical notation, and decorative layouts as quality targets;
-- Bite text editing, expanded Bite detail, assignment UI, deletion UI, or manual OCR correction;
+- expanded Bite detail, assignment UI, or deletion UI;
 - cloud OCR, upload, analytics, accounts, or synchronization.
 
 OCR text is stored in a mutable field for a later editor. Deferring that editor does not remove the overall MVP requirement to edit Bite text.

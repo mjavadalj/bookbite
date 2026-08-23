@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bookbite_canvas">#F3EEE2</color>
+    <color name="bookbite_surface">#FBF8F1</color>
+    <color name="bookbite_primary">#6B7052</color>
+    <color name="bookbite_sage">#8FA07C</color>
+</resources>

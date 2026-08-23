@@ -41,11 +41,8 @@ class DartCatalogHttpClient implements CatalogHttpClient {
 }
 
 class OpenLibraryCatalogRepository implements CatalogRepository {
-  OpenLibraryCatalogRepository({
-    required CatalogHttpClient client,
-    required String contact,
-  }) : _client = client,
-       _contact = contact.trim();
+  OpenLibraryCatalogRepository({required this._client, required String contact})
+    : _contact = contact.trim();
 
   final CatalogHttpClient _client;
   final String _contact;
@@ -57,28 +54,25 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
 
   @override
   Future<CatalogPage> weekly({required String language}) async {
-    final data = await _get(
-      Uri.https(_host, '/trending/weekly.json', {'limit': '10'}),
+    final page = await _search(
+      'language:eng',
+      language: 'en',
+      offset: 0,
+      sort: 'trending',
     );
-    final books = _mapDocuments(data['works']).take(10).toList(growable: false);
     return CatalogPage(
-      books: books,
+      books: page.books.take(10).toList(growable: false),
       hasMore: false,
-      source: CatalogSource.network,
-      lastUpdated: DateTime.now().toUtc(),
+      source: page.source,
+      lastUpdated: page.lastUpdated,
     );
   }
 
   @override
   Future<CatalogPage> browse({required String language, required int offset}) {
     const subjects =
-        '(subject:philosophy OR subject:fiction OR subject:history OR subject:biography OR subject:self_help)';
-    return _search(
-      subjects,
-      language: language,
-      offset: offset,
-      sort: 'trending',
-    );
+        '(subject:philosophy OR subject:fiction OR subject:history OR subject:biography OR subject:self_help) AND language:eng';
+    return _search(subjects, language: 'en', offset: offset, sort: 'trending');
   }
 
   @override
@@ -90,8 +84,8 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
   }) {
     final literal = query.replaceAll('"', r'\"');
     return _search(
-      isIsbn ? 'isbn:$literal' : '"$literal"',
-      language: language,
+      '${isIsbn ? 'isbn:$literal' : '"$literal"'} AND language:eng',
+      language: 'en',
       offset: offset,
     );
   }
@@ -103,6 +97,7 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
     String? workId,
     required String language,
   }) async {
+    const preferredEditionLanguage = 'eng';
     if (provider != 'openLibrary' ||
         !_validCatalogKey(id) ||
         (workId != null && !_validCatalogKey(workId))) {
@@ -123,7 +118,10 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
       final editions = await _get(
         Uri.https(_host, '/works/$id/editions.json', {'limit': '10'}),
       );
-      edition = _representativeEdition(editions['entries'], language);
+      edition = _representativeEdition(
+        editions['entries'],
+        preferredEditionLanguage,
+      );
     }
 
     final title = _text(edition['title']) ?? _text(work['title']);
@@ -197,7 +195,11 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
     if (subjects.isEmpty) return const [];
 
     final query = subjects.map((subject) => 'subject:"$subject"').join(' OR ');
-    final page = await _search('($query)', language: language, offset: 0);
+    final page = await _search(
+      '($query) AND language:eng',
+      language: 'en',
+      offset: 0,
+    );
     final excluded = {book.id, if (book.workId != null) book.workId!};
     final unique = <String, CatalogBook>{};
     for (final candidate in page.books) {
@@ -223,7 +225,7 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
       'lang': language,
       'limit': '20',
       'offset': '$offset',
-      if (sort != null) 'sort': sort,
+      'sort': ?sort,
     };
     final data = await _get(Uri.https(_host, '/search.json', params));
     final raw = data['docs'];
@@ -425,7 +427,7 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
 
   Uri? _coverUrl(int? coverId) => coverId == null
       ? null
-      : Uri.https('covers.openlibrary.org', '/b/id/${coverId}-L.jpg');
+      : Uri.https('covers.openlibrary.org', '/b/id/$coverId-L.jpg');
 
   int? _positiveInt(Object? raw) =>
       raw is num && raw.toInt() > 0 ? raw.toInt() : null;

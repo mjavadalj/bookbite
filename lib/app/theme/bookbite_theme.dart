@@ -11,6 +11,22 @@ abstract final class BookBiteTokens {
   static const atmosphericSage = Color(0xFF8FA07C);
   static const selectedSurface = Color(0xFFE4E7DE);
   static const navigationIcon = secondaryText;
+  static const shelfWood = Color(0xFFE8D6B6);
+  static const shelfEdge = Color(0xFFCDB792);
+  static const shelfBoard = Color(0xFFB58E5C);
+  static const shelfShadowSoft = Color(0x1F5B4328);
+  static const shelfShadowStrong = Color(0x3D5B4328);
+  static const bookSpinePalette = <Color>[
+    Color(0xFF6B795D),
+    Color(0xFFD8CDB7),
+    Color(0xFF879273),
+    Color(0xFFC7B998),
+    primary,
+    Color(0xFFE2D9C6),
+  ];
+  static const activityLow = Color(0xFFC8D2BE);
+  static const activityMedium = Color(0xFF98AA89);
+  static const activityHigh = Color(0xFF6F865F);
 
   static const space1 = 8.0;
   static const space2 = 16.0;

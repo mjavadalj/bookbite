@@ -281,8 +281,9 @@ class _WeeklyShelf extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = BookBiteLocalizations.of(context);
-    if (section.status == CatalogStatus.empty)
+    if (section.status == CatalogStatus.empty) {
       return const SliverToBoxAdapter();
+    }
     return SliverPadding(
       padding: const EdgeInsets.only(top: 8),
       sliver: SliverToBoxAdapter(
@@ -349,22 +350,25 @@ class _BrowseGrid extends StatelessWidget {
   final ValueChanged<CatalogBook> onOpen;
   @override
   Widget build(BuildContext context) {
-    if (section.status == CatalogStatus.loading && section.books.isEmpty)
+    if (section.status == CatalogStatus.loading && section.books.isEmpty) {
       return const SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.all(48),
           child: Center(child: CircularProgressIndicator()),
         ),
       );
+    }
     if (section.status == CatalogStatus.error ||
-        section.status == CatalogStatus.offline)
+        section.status == CatalogStatus.offline) {
       return SliverToBoxAdapter(
         child: _CatalogMessage(section: section, onRetry: onRetry),
       );
-    if (section.status == CatalogStatus.empty)
+    }
+    if (section.status == CatalogStatus.empty) {
       return SliverToBoxAdapter(
         child: _CatalogMessage(section: section, onRetry: onRetry),
       );
+    }
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       sliver: SliverLayoutBuilder(
@@ -534,7 +538,7 @@ class _Pagination extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = BookBiteLocalizations.of(context);
     if (section.books.isEmpty) return const SizedBox.shrink();
-    if (section.failure != null && section.hasMore)
+    if (section.failure != null && section.hasMore) {
       return Padding(
         padding: const EdgeInsets.all(24),
         child: OutlinedButton(
@@ -542,7 +546,8 @@ class _Pagination extends StatelessWidget {
           child: Text(strings.retry),
         ),
       );
-    if (section.hasMore)
+    }
+    if (section.hasMore) {
       return Padding(
         padding: const EdgeInsets.all(24),
         child: OutlinedButton(
@@ -550,6 +555,7 @@ class _Pagination extends StatelessWidget {
           child: Text(strings.loadMoreBooks),
         ),
       );
+    }
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Text(

@@ -48,7 +48,7 @@ The MVP uses no cloud or paid OCR. Future cloud OCR requires a separate approved
 |---|---|---|
 | Engine | `whisper.cpp` | Free, multilingual, and fully on-device in MVP |
 | Integration | Dart interface with isolated native Android/iOS adapters | No engine types outside the data adapter |
-| Model | Bundled quantized multilingual Whisper model | Must support English and Persian without a runtime download |
+| Model | Bundled multilingual Whisper Tiny Q5_1 with a five-second native audio context | Supports English and Persian without a runtime download; the shortened context prevents 30-second padding from causing multi-minute inference on 32-bit devices |
 | Execution | Background processing after recording stops | Must not block the UI; must resume or fail recoverably |
 
 The model variant must be pinned after English/Persian accuracy, package-size, memory, and latency testing on the approved minimum device. The MVP uses no cloud or paid speech-to-text.
@@ -74,7 +74,7 @@ Use:
 
 Tests must cover positive, negative, edge, offline, restart, recovery, accessibility, RTL, and data-preservation behavior appropriate to each feature.
 
-Voice-capture tests must cover permission denial, Cancel, the 30-second automatic stop, durable audio retention, retry after restart, deletion, and English/Persian transcription.
+Voice-capture tests must cover permission denial, Cancel, the 5-second automatic stop, durable audio retention, retry after restart, deletion, and English/Persian transcription.
 
 ReadingSession tests must verify idle launch, explicit Start, automatic start on successful Photo or Voice capture, active-session reuse, Bite linkage, and no session creation after denied, canceled, or pre-capture failure paths.
 

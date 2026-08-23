@@ -27,7 +27,7 @@ For Bite capture:
 3. expose `processing`, `ready`, and recoverable `failed` states;
 4. never imply that a pending Bite was lost.
 
-Voice recording must show recording state and elapsed or remaining time without demanding attention. It must provide Stop and Cancel actions and stop automatically at 30 seconds.
+Voice recording must show recording state and elapsed or remaining time without demanding attention. It must provide Stop and Cancel actions and stop automatically at 5 seconds.
 
 Optimistic feedback may be used only when failure can be recovered without losing user data.
 

@@ -5,10 +5,42 @@ import 'package:bookbite/features/library/domain/personal_book.dart' as domain;
 import 'package:bookbite/features/library/domain/personal_book_repository.dart';
 import 'package:drift/drift.dart';
 
-class DriftPersonalBookRepository implements PersonalBookRepository {
+class DriftPersonalBookRepository
+    implements PersonalBookRepository, ManualPersonalBookRepository {
   DriftPersonalBookRepository(this._database);
 
   final database.AppDatabase _database;
+
+  @override
+  Future<domain.PersonalBook> createManual({
+    required String id,
+    required String title,
+    required DateTime createdAt,
+  }) async {
+    final normalized = title.trim();
+    if (normalized.isEmpty) {
+      throw const FormatException('A title is required.');
+    }
+    final timestamp = createdAt.toUtc().millisecondsSinceEpoch;
+    final snapshot = domain.CatalogMetadataSnapshot(title: normalized);
+    await _database
+        .into(_database.personalBookEntries)
+        .insert(
+          database.PersonalBookEntriesCompanion.insert(
+            id: id,
+            title: normalized,
+            authorsJson: '[]',
+            snapshotJson: jsonEncode(_snapshotToJson(snapshot)),
+            createdAt: timestamp,
+            updatedAt: timestamp,
+          ),
+        );
+    final created = await findById(id);
+    if (created == null) {
+      throw StateError('PersonalBook could not be read back.');
+    }
+    return created;
+  }
 
   @override
   Future<domain.PersonalBook> importCatalogBook(domain.NewPersonalBook book) =>

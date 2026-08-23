@@ -229,8 +229,9 @@ class DiscoverController extends _$DiscoverController {
 
   void submitSearch() {
     final parsed = SearchQuery.parse(state.visibleQuery);
-    if (parsed == null || (!parsed.isIsbn && parsed.value.runes.length < 3))
+    if (parsed == null || (!parsed.isIsbn && parsed.value.runes.length < 3)) {
       return;
+    }
     _debounce?.cancel();
     _performSearch(parsed);
   }

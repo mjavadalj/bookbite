@@ -1,6 +1,6 @@
 # Feature Specification: Reading Session
 
-**Status:** Proposed
+**Status:** Approved
 **Last updated:** 2026-08-18
 
 ## 1. Purpose
@@ -26,11 +26,10 @@ The MVP presentation is intentionally approximate. It uses the supplied HTML as 
 
 ### Out of scope
 
-- functional Voice capture or transcription;
 - FocusMode;
 - page counters, reading percentages, and progress editing;
 - changing a ReadingCycle to paused, finished, or dropped;
-- Bite text editing, expanded Bite details, deletion, or reassignment;
+- Bite deletion or reassignment;
 - global catalog search or PersonalBook creation;
 - exact reproduction of the mockup.
 
@@ -43,7 +42,7 @@ These exclusions are limited to this slice. They do not remove later MVP obligat
 3. At most one ReadingSession is active.
 4. The active session always wins over stale picker or confirmation navigation.
 5. A reader can start without a book.
-6. Camera is available; Voice is visible but disabled with localized unavailable semantics.
+6. Camera and five-second Voice capture are available and use the shared durable Bite pipeline.
 7. Add a new book is visible but disabled with localized helper text.
 8. End session ends only the timed session; it does not finish or pause its ReadingCycle.
 9. Small Bite thumbnails communicate status but do not open an editor in this slice.

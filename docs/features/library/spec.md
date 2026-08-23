@@ -1,6 +1,6 @@
 # Feature Specification: Library
 
-**Status:** Proposed  
+**Status:** Approved
 **Feature owner:** Library  
 **MVP platform:** Android, preserving future iOS compatibility  
 **Last updated:** 2026-08-11

@@ -57,13 +57,13 @@ The MVP has no Profile, account, synchronization, cloud text-extraction, public 
 Photo and Voice are available from every main destination and eligible child route. They have equal visual weight and differ only by capture method:
 
 - Photo captures a page image for OCR.
-- Voice records up to 30 seconds for speech-to-text.
+- Voice records up to 5 seconds for speech-to-text.
 
 Reading Session and FocusMode present both as the two primary actions. Other eligible routes present both as compact actions in the bottom navigation area. Neither action is a destination or replaces the current navigation stack.
 
 CatalogBook overview and focused catalog search do not expose Photo or Voice. These routes prioritize evaluating or locating a catalog record. Back or Cancel returns to the Discover root, where both capture actions remain available.
 
-Capture opens above the current context. Voice capture shows recording state and elapsed or remaining time, permits Stop or Cancel, and stops automatically at 30 seconds. Cancel creates no Bite. Microphone denial shows a localized explanation and access to system settings without affecting Photo.
+Capture opens above the current context. Voice capture shows recording state and elapsed or remaining time, permits Stop or Cancel, and stops automatically at 5 seconds. Cancel creates no Bite. Microphone denial shows a localized explanation and access to system settings without affecting Photo.
 
 Capture reuses the active ReadingSession. If none exists, durable capture creates one using the capture start time. Canceling or failing before durable capture completes creates neither a Bite nor a ReadingSession.
 

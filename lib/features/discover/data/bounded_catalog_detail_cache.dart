@@ -3,8 +3,7 @@ import 'package:bookbite/features/discover/domain/catalog_book.dart';
 import 'package:bookbite/features/discover/domain/catalog_book_detail.dart';
 
 class CatalogDetailCache {
-  CatalogDetailCache({CatalogDetailCacheStore? store, this.now = DateTime.now})
-    : _store = store;
+  CatalogDetailCache({this._store, this.now = DateTime.now});
 
   final CatalogDetailCacheStore? _store;
   final DateTime Function() now;

@@ -1,11 +1,15 @@
 import 'package:bookbite/app/navigation/app_shell.dart';
 import 'package:bookbite/features/discover/presentation/active_search_page.dart';
 import 'package:bookbite/features/discover/presentation/discover_destination_placeholders.dart';
+import 'package:bookbite/features/bites/presentation/bite_collection_page.dart';
 import 'package:bookbite/features/discover/presentation/discover_page.dart';
 import 'package:bookbite/features/catalog/presentation/catalog_book_detail_page.dart';
 import 'package:bookbite/features/journey/presentation/journey_page.dart';
 import 'package:bookbite/features/library/presentation/library_page.dart';
+import 'package:bookbite/features/library/presentation/personal_book_detail_page.dart';
 import 'package:bookbite/features/reading_session/presentation/reading_session_page.dart';
+import 'package:bookbite/features/reading_session/presentation/camera_capture_page.dart';
+import 'package:bookbite/features/reading_session/presentation/voice_capture_page.dart';
 import 'package:bookbite/features/settings/presentation/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -141,5 +145,86 @@ class ManualBookDestinationRoute extends GoRouteData
       MaterialPage(
         restorationId: 'manual_book_destination',
         child: ManualBookDestinationPlaceholder(query: query),
+      );
+}
+
+@TypedGoRoute<PersonalBookDetailRoute>(path: '/library/book/:personalBookId')
+class PersonalBookDetailRoute extends GoRouteData
+    with $PersonalBookDetailRoute {
+  const PersonalBookDetailRoute({required this.personalBookId});
+
+  final String personalBookId;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      MaterialPage(
+        restorationId: 'personal_book_detail',
+        child: PersonalBookDetailPage(personalBookId: personalBookId),
+      );
+}
+
+@TypedGoRoute<BookBitesRoute>(path: '/library/book/:personalBookId/bites')
+class BookBitesRoute extends GoRouteData with $BookBitesRoute {
+  const BookBitesRoute({required this.personalBookId, this.title});
+
+  final String personalBookId;
+  final String? title;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      MaterialPage(
+        restorationId: 'book_bites',
+        child: BiteCollectionPage(
+          kind: BiteCollectionKind.book,
+          ownerId: personalBookId,
+          title: title == null ? 'Bites' : '$title · Bites',
+        ),
+      );
+}
+
+@TypedGoRoute<SessionBitesRoute>(path: '/reading-session/:sessionId/bites')
+class SessionBitesRoute extends GoRouteData with $SessionBitesRoute {
+  const SessionBitesRoute({required this.sessionId});
+
+  final String sessionId;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      MaterialPage(
+        restorationId: 'session_bites',
+        child: BiteCollectionPage(
+          kind: BiteCollectionKind.session,
+          ownerId: sessionId,
+        ),
+      );
+}
+
+@TypedGoRoute<ReadingSessionCaptureRoute>(
+  path: '/reading-session/capture/photo',
+)
+class ReadingSessionCaptureRoute extends GoRouteData
+    with $ReadingSessionCaptureRoute {
+  const ReadingSessionCaptureRoute();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      const MaterialPage(
+        restorationId: 'reading_session_capture_photo',
+        child: CameraCapturePage(),
+      );
+}
+
+@TypedGoRoute<ReadingSessionVoiceCaptureRoute>(
+  path: '/reading-session/capture/voice',
+)
+class ReadingSessionVoiceCaptureRoute extends GoRouteData
+    with $ReadingSessionVoiceCaptureRoute {
+  const ReadingSessionVoiceCaptureRoute();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) =>
+      const MaterialPage(
+        restorationId: 'reading_session_capture_voice',
+        child: VoiceCapturePage(),
       );
 }

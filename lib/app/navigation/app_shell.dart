@@ -26,6 +26,10 @@ class AppShell extends StatelessWidget {
       bottomNavigationBar: BookBiteBottomBar(
         selectedIndex: selectedIndex,
         showCaptureActions: currentLocation != '/reading-session',
+        onPhotoCapture: () =>
+            const ReadingSessionCaptureRoute().push<void>(context),
+        onVoiceCapture: () =>
+            const ReadingSessionVoiceCaptureRoute().push<void>(context),
         onDestinationSelected: (index) => switch (index) {
           0 => const ReadingSessionRoute().go(context),
           1 => const LibraryRoute().go(context),

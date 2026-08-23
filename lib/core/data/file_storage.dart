@@ -5,4 +5,6 @@ abstract interface class ManagedFileStorage {
   });
 
   Future<void> delete(String managedReference);
+
+  Future<List<String>> listManagedReferences();
 }

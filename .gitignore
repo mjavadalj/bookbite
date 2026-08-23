@@ -3,26 +3,45 @@
 skills*
 .tooling/
 .dart_tool/
+.pub-cache/
+.fvm/
 .env
 
 # Flutter build output and generated tooling
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.flutter
+.flutter_tool_state
 .packages
 
 # Android/Gradle local state
 android/.gradle/
+android/.kotlin/
+**/.cxx/
 android/local.properties
 android/app/build/
 android/captures/
 android/gradle.properties.local
+android/key.properties
+*.jks
+*.keystore
 
 # IDE metadata
 .idea/
+.vscode/
 *.iml
 
-# Local logs and OS files
+# Test reports and local database artifacts
+coverage/
+*.lcov
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local logs, temporary files, and OS files
 *.log
+*.pid
+*.tmp
 .DS_Store
 Thumbs.db

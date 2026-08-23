@@ -7,12 +7,16 @@ class BookBiteBottomBar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.showCaptureActions,
+    required this.onPhotoCapture,
+    required this.onVoiceCapture,
     super.key,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
   final bool showCaptureActions;
+  final VoidCallback onPhotoCapture;
+  final VoidCallback onVoiceCapture;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +58,11 @@ class BookBiteBottomBar extends StatelessWidget {
           children: [
             if (showCaptureActions) ...[
               const SizedBox(height: BookBiteTokens.space1),
-              _CaptureActions(strings: strings),
+              _CaptureActions(
+                strings: strings,
+                onPhotoCapture: onPhotoCapture,
+                onVoiceCapture: onVoiceCapture,
+              ),
               const SizedBox(height: BookBiteTokens.space1),
             ],
             const Divider(height: 1, color: BookBiteTokens.border),
@@ -82,9 +90,15 @@ class BookBiteBottomBar extends StatelessWidget {
 }
 
 class _CaptureActions extends StatelessWidget {
-  const _CaptureActions({required this.strings});
+  const _CaptureActions({
+    required this.strings,
+    required this.onPhotoCapture,
+    required this.onVoiceCapture,
+  });
 
   final BookBiteLocalizations strings;
+  final VoidCallback onPhotoCapture;
+  final VoidCallback onVoiceCapture;
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +118,7 @@ class _CaptureActions extends StatelessWidget {
               child: _CaptureAction(
                 icon: Icons.photo_camera_outlined,
                 label: strings.photo,
+                onPressed: onPhotoCapture,
               ),
             ),
             const SizedBox(
@@ -114,6 +129,7 @@ class _CaptureActions extends StatelessWidget {
               child: _CaptureAction(
                 icon: Icons.mic_none_rounded,
                 label: strings.voice,
+                onPressed: onVoiceCapture,
               ),
             ),
           ],
@@ -124,31 +140,40 @@ class _CaptureActions extends StatelessWidget {
 }
 
 class _CaptureAction extends StatelessWidget {
-  const _CaptureAction({required this.icon, required this.label});
+  const _CaptureAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
 
   final IconData icon;
   final String label;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      enabled: false,
+      enabled: true,
       label: label,
-      child: SizedBox.expand(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 27, color: BookBiteTokens.primary),
-            const SizedBox(width: BookBiteTokens.space1),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: BookBiteTokens.primary,
-                fontWeight: FontWeight.w600,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 27, color: BookBiteTokens.primary),
+              const SizedBox(width: BookBiteTokens.space1),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: BookBiteTokens.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

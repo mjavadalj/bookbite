@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.bookbite.bookbite"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -41,4 +41,13 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Camera JPEGs commonly store rotation in EXIF instead of rotating pixels.
+    // Tesseract needs an actually upright bitmap.
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
+    // Tesseract4Android 4.9.0 embeds Tesseract 5.5.1 and is called through
+    // MainActivity's local-only MethodChannel adapter.
+    implementation("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
 }

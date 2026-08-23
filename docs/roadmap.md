@@ -1,6 +1,10 @@
 # BookBite MVP Delivery Roadmap
 
-**Last verified:** 2026-08-13
+**Last verified:** 2026-08-23
+
+**Automated verification:** `flutter analyze` passes with no issues and all 52 automated tests pass serially. The debug Android APK was most recently verified on 2026-08-22 with the pinned AGP 8.11.1, Kotlin 2.2.20, and NDK 28.2.13676358 toolchain.
+
+**Open release evidence:** approved-device OCR/Whisper accuracy, latency, memory, thermal, installed-size, TalkBack, dynamic-text, and RTL checks remain physical-device gates rather than unverified completion claims.
 
 ## Purpose
 
@@ -24,6 +28,9 @@ Every major capability must have an approved feature specification before implem
 - [x] Configure Drift over SQLite with schema versioning and migration-test support.
 - [x] Establish replaceable interfaces for catalog access, managed file storage, OCR, speech-to-text, clocks, and ID generation.
 - [x] Add baseline CI checks for formatting, analysis, generated code, tests, and database migrations.
+- [x] Show a recoverable in-app launch/loading state while environment and local first-run state initialize.
+- [x] Add localized, responsive first-run onboarding with Skip, completion persistence, English LTR, Persian RTL, reduced-motion, and large-text support.
+- [ ] Install the exact user-supplied launcher and launch-screen icon source files once they are available in the workspace; generated or redrawn substitutes are explicitly excluded.
 
 ### Completion Gate
 
@@ -75,7 +82,7 @@ Every major capability must have an approved feature specification before implem
 - [ ] Missing fields, missing covers, malformed responses, provider failure, restart, reduced motion, dynamic text, and RTL are verified.
 ## 4. Add to Personal Library
 
-- [x] Finalize the catalog-import behavior; keep manual PersonalBook creation deferred.
+- [x] Finalize catalog import and manual PersonalBook creation behavior.
 - [x] Add versioned Drift schemas for PersonalBook records and optional catalog provenance.
 - [x] Store imported catalog metadata as a permanent local snapshot owned by the PersonalBook.
 - [x] Implement PersonalBook domain and repository interfaces without coupling them to Open Library.
@@ -83,10 +90,12 @@ Every major capability must have an approved feature specification before implem
 - [x] Make imports idempotent by provider and provider-specific edition ID.
 - [x] Return the existing PersonalBook when the same provider edition has already been imported.
 - [x] Allow a different edition or translation to become a separate PersonalBook.
-- [ ] Implement manual PersonalBook creation with a required title and no catalog dependency. Deferred from this milestone slice.
+- [x] Implement manual PersonalBook creation with a required title and no catalog dependency.
 - [x] Keep the user on CatalogBook Detail after a successful import and show a confirmed saved state.
 - [x] Make repeated Add actions safe and prevent duplicate records.
-- [x] Defer the Library page and PersonalBook Detail page.
+- [x] Implement the offline Library page and core PersonalBook Detail page.
+- [x] Implement the approved PersonalBook reading-journey presentation with persisted session metrics, a trend summary, and session history.
+- [x] Add a dedicated PersonalBook Bite collection with word search, predefined-tag filters, and per-Bite text/tag editing.
 
 ### Completion Gate
 
@@ -96,54 +105,100 @@ Every major capability must have an approved feature specification before implem
 
 ## 5. Reading Session, Bite, and OCR
 
-- [ ] Write and approve the Reading Session feature specification.
-- [ ] Write and approve the page-image Bite and OCR feature specification, including measurable English and Persian quality targets and a test corpus.
-- [ ] Add versioned Drift schemas for ReadingCycle, ReadingSession, Bite, managed source-media references, and persistent extraction jobs.
-- [ ] Implement domain and repository boundaries for sessions, cycles, Bites, media, and extraction jobs.
-- [ ] Enforce at most one active ReadingSession.
-- [ ] Ensure opening the Reading Session destination performs no domain write.
-- [ ] Support explicit session start and automatic session creation after the first successful durable capture when no session is active.
-- [ ] Reuse the active session for subsequent captures.
-- [ ] Allow ReadingSession, Bite, PersonalBook, and ReadingCycle assignments to remain absent and be added later.
-- [ ] Link every newly captured Bite to the active or newly created ReadingSession.
-- [ ] Make a session-linked Bite inherit the session's PersonalBook and ReadingCycle assignment unless explicitly reassigned or detached.
-- [ ] Save valid page images in app-private managed storage before confirming capture.
-- [ ] Commit the session, Bite, and managed media reference as one durable workflow.
-- [ ] Create neither a Bite nor a ReadingSession when capture is canceled or fails before durability.
-- [ ] Integrate Tesseract 5 behind the OCR interface with bundled English and Persian models.
-- [ ] Run OCR outside the UI thread through persistent extraction jobs.
-- [ ] Expose `captured`, `processing`, `ready`, and recoverable `failed` states.
-- [ ] Store editable extracted text while retaining source media until the user deletes it.
-- [ ] Resume interrupted extraction after restart or move it to a recoverable failed state.
-- [ ] Reconcile temporary files, incomplete writes, and orphaned managed media safely.
+**Current status:** Durable local capture, session/Bite/media/job persistence, editable tagged Bite text, restart recovery, and the redesigned active-session presentation are implemented. Physical OCR quality/performance evidence and full reconciliation/deletion verification remain open.
+
+- [x] Add the idle, selected-book confirmation, active-session, and camera/review page states.
+- [x] Add the typed `/reading-session/capture/photo` route above the reading-session context.
+- [x] Add the camera adapter, Android camera permission, review, Retake, Use photo, and disabled Gallery/camera-switch controls.
+
+- [x] Write and approve the Reading Session feature specification.
+- [x] Write and approve the page-image Bite and OCR feature specification, including measurable English and Persian quality targets and a test corpus.
+- [x] Add versioned Drift schemas for ReadingCycle, ReadingSession, Bite, managed source-media references, and persistent extraction jobs.
+- [x] Implement domain and repository boundaries for sessions, cycles, Bites, media, and extraction jobs.
+- [x] Enforce at most one active ReadingSession.
+- [x] Ensure opening the Reading Session destination performs no domain write.
+- [x] Support explicit session start and automatic session creation after the first successful durable capture when no session is active.
+- [x] Reuse the active session for subsequent captures.
+- [x] Allow ReadingSession, Bite, PersonalBook, and ReadingCycle assignments to remain absent and be added later.
+- [x] Link every newly captured Bite to the active or newly created ReadingSession.
+- [x] Make a session-linked Bite inherit the session's PersonalBook and ReadingCycle assignment unless explicitly reassigned or detached.
+- [x] Save valid page images in app-private managed storage before confirming capture.
+- [x] Commit the session, Bite, and managed media reference as one durable workflow.
+- [x] Create neither a Bite nor a ReadingSession when capture is canceled or fails before durability.
+- [x] Integrate Tesseract 5 behind the OCR interface with bundled English and Persian models.
+- [x] Run OCR asynchronously through a single-worker prototype job queue without blocking navigation.
+- [x] Expose queued, processing, ready, and recoverable failed states in the active Reading Session Bite cards, including extracted text and Retry.
+- [x] Run OCR outside the UI thread through persistent extraction jobs.
+- [x] Persist `captured`, `processing`, `ready`, and recoverable `failed` states.
+- [x] Store editable extracted text while retaining source media until the user deletes it.
+- [x] Persist zero or more predefined Bite tags: Quotes, Thoughts, Ideas, Questions, and Lessons.
+- [x] Allow Bite text and tags to be edited together from book and session Bite cards.
+- [x] Add a dedicated session Bite collection with word search, tag filters, and a visible edit action on every Bite.
+- [x] Redesign the active Reading Session with a live timer, capture actions, the two newest Bites, and a `See all` route beside the session Bite count.
+- [x] Resume interrupted extraction after restart or move it to a recoverable failed state.
+- [x] Reconcile temporary files, incomplete writes, and orphaned managed media safely.
 
 ### Completion Gate
 
-- [ ] Durable capture confirms only after media and records are safe.
-- [ ] OCR failure or application restart never deletes the Bite or its source image.
+The following prototype checks are complete, but they do not satisfy the durable completion gate below:
+
+- [x] A captured image can return to an active session and display OCR status and extracted text.
+- [x] OCR runner unit coverage covers success, duplicate enqueue protection, and recoverable failure.
+- [x] A file-backed close/reopen test preserves the PersonalBook, completed ReadingSession, Bite text, and multiple Bite tags.
+- [x] Widget coverage verifies Bite word search and persisted-tag filtering.
+
+- [x] Durable capture confirms only after media and records are safe.
+- [x] OCR failure or application restart never deletes the Bite or its source image.
 - [ ] Session creation, active-session reuse, assignment inheritance, cancellation, rollback, retry, restart recovery, media deletion, and migration behavior are covered by tests.
 - [ ] English and Persian OCR meet the approved quality and performance thresholds on the approved reference device.
 
 ## 6. Voice-to-Text
 
-- [ ] Write and approve the voice-Bite specification with measurable English and Persian accuracy, latency, package-size, and memory criteria.
-- [ ] Reuse the existing durable Bite, ReadingSession, assignment, media, and processing-job pipeline.
-- [ ] Record app-private 16 kHz mono PCM WAV audio through the replaceable recording interface.
-- [ ] Provide Stop and Cancel actions and stop recording automatically at 30 seconds.
-- [ ] Create no Bite or ReadingSession after permission denial, cancellation, or failure before durable audio capture.
-- [ ] Integrate `whisper.cpp` behind the replaceable speech-to-text interface.
+- [x] Write and approve the voice-Bite specification with measurable English and Persian accuracy, latency, package-size, and memory criteria.
+- [x] Reuse the existing durable Bite, ReadingSession, assignment, media, and processing-job pipeline.
+- [x] Record app-private 16 kHz mono PCM WAV audio through the replaceable recording interface.
+- [x] Provide Stop and Cancel actions and stop recording automatically at 5 seconds.
+- [x] Create no Bite or ReadingSession after permission denial, cancellation, or failure before durable audio capture.
+- [x] Integrate `whisper.cpp` behind the replaceable speech-to-text interface.
 - [ ] Benchmark candidate quantized multilingual Whisper models on the approved minimum device.
 - [ ] Obtain approval and pin the bundled model only after it meets the defined quality, package-size, memory, and latency thresholds.
-- [ ] Run transcription outside the UI thread after recording stops.
-- [ ] Expose durable capture confirmation, processing state, editable results, recoverable failure, and retry.
-- [ ] Resume interrupted transcription after restart or move it to a recoverable failed state.
-- [ ] Retain voice recordings until explicitly deleted and preserve editable text after source deletion.
+- [x] Run transcription outside the UI thread after recording stops.
+- [x] Expose durable capture confirmation, processing state, editable results, recoverable failure, and retry.
+- [x] Resume interrupted transcription after restart or move it to a recoverable failed state.
+- [x] Retain voice recordings until explicitly deleted and preserve editable text after source deletion.
 
 ### Completion Gate
 
 - [ ] Voice capture and transcription work fully on-device in English and Persian.
-- [ ] Permission denial leaves Photo capture, PersonalBooks, and all existing data usable.
+- [x] Permission denial leaves Photo capture, PersonalBooks, and all existing data usable.
 - [ ] Automatic stop, manual stop, cancellation, permission denial, restart recovery, retry, source deletion, assignment inheritance, and active-session reuse are covered by tests.
+
+## 7. Library Presentation, ReadingJourney, and Basic Progression
+
+**Current status:** The approved minimum Library and Journey presentations are implemented from local persisted data. Progression is deliberately limited to accumulated ReadingSession time and contains no competitive or reward mechanics.
+
+- [x] Write and approve Library presentation and ReadingJourney/basic-progression feature specifications.
+- [x] Implement the warm, vertically scrollable Library hierarchy from the approved reference.
+- [x] Present persisted PersonalBooks as a horizontally scrollable, accessible bookshelf without inventing cover art or metadata.
+- [x] Derive Library reading progress, book count, streak, and level from local records.
+- [x] Implement the private Journey reader header without adding an account or public Profile destination.
+- [x] Derive total time, today's time, completed sessions, streak, and level from persisted ReadingSessions.
+- [x] Implement a 16-week Monday-to-Sunday contribution heatmap with per-cell date/minute semantics.
+- [x] Split sessions that cross midnight across their actual local calendar days.
+- [x] Count active-session time only through the current time.
+- [x] Implement calm hourly progression: Level 1 initially, then one level per 60 accumulated minutes.
+- [x] Implement the PersonalBook Detail journey surface using the book's persisted sessions and Bites.
+- [x] Provide typed navigation from PersonalBook Detail to the searchable, tag-filterable book Bite collection.
+- [ ] Localize the new PersonalBook Detail, Bite collection, tag-editor, and redesigned active-session strings in English and Persian.
+
+### Completion Gate
+
+- [x] OCR and voice-transcription text are editable and persist after Save in both active-session and PersonalBook contexts.
+- [x] Library and Journey render from persisted local records and perform no read-side domain writes.
+- [x] Duration aggregation, active-session calculation, midnight distribution, streak, and level progression have deterministic unit coverage.
+- [x] Populated Library, Journey heatmap, Photo/Voice editing, 375px phone, Persian RTL at 200% text, and phone-landscape layouts have widget coverage.
+- [x] Database close/reopen coverage verifies that books, sessions, Bite edits, tags, and Journey inputs remain durable.
+- [ ] TalkBack traversal and physical-device visual review remain release evidence gates.
 
 ## Cross-Cutting Verification
 
@@ -164,9 +219,7 @@ Every milestone must verify, as applicable:
 
 The following work is intentionally outside the milestones currently defined in this roadmap:
 
-- Library page implementation.
-- PersonalBook Detail page implementation.
-- ReadingJourney and progression UI.
+- PersonalBook metadata editing, archiving, and deletion.
 - Accounts, synchronization, cloud backup, and cloud text extraction.
 - Personalized recommendations, reviews, ratings, and social features.
 - Remaining MVP and post-MVP capabilities not yet specified.
@@ -178,6 +231,6 @@ The following work is intentionally outside the milestones currently defined in 
 - The five-book limit applies only to disposable full CatalogBook detail cache entries.
 - Browse and search summaries use a separately bounded cache whose exact limits are defined by the Discover specification.
 - Imported PersonalBook metadata is a permanent local snapshot and is never subject to catalog-cache eviction.
-- Adding a CatalogBook keeps the user on CatalogBook Detail and shows a confirmed saved state until PersonalBook Detail is implemented.
+- Adding a CatalogBook keeps the user on CatalogBook Detail and shows a confirmed saved state; the saved PersonalBook is available from Library and PersonalBook Detail.
 - Local data remains the sole MVP source of truth; the network is used only for external catalog discovery.
 - This document will be updated as milestones are completed or later work is approved.

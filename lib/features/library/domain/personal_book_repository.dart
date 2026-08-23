@@ -12,3 +12,11 @@ abstract interface class PersonalBookRepository {
 
   Stream<List<PersonalBookSummary>> watchActiveBooks();
 }
+
+abstract interface class ManualPersonalBookRepository {
+  Future<PersonalBook> createManual({
+    required String id,
+    required String title,
+    required DateTime createdAt,
+  });
+}
