@@ -37,6 +37,48 @@ void main() {
     await _disposePage(tester);
   });
 
+  testWidgets('book selection opens a stopped timer before session creation', (
+    tester,
+  ) async {
+    await _setPhoneSize(tester);
+    await _insertBook(database);
+
+    await tester.pumpWidget(_testApp(database, const ReadingSessionPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Start a Session'), findsOneWidget);
+    expect(find.text('Choose a book to begin'), findsOneWidget);
+    expect(find.text('YOUR LIBRARY'), findsOneWidget);
+    expect(find.text('Back'), findsNothing);
+    expect(
+      await database.select(database.readingSessionEntries).get(),
+      isEmpty,
+    );
+
+    await tester.tap(find.text('The Alchemist'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('TIME READING'), findsOneWidget);
+    expect(find.text('00:00'), findsOneWidget);
+    expect(find.byTooltip('Start session'), findsOneWidget);
+    expect(find.text('Start with this book?'), findsNothing);
+    expect(find.text('Begin reading'), findsNothing);
+    expect(
+      await database.select(database.readingSessionEntries).get(),
+      isEmpty,
+    );
+
+    await tester.tap(find.byTooltip('Start session'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(
+      await database.select(database.readingSessionEntries).get(),
+      hasLength(1),
+    );
+    await _disposePage(tester);
+  });
+
   testWidgets('journey shows persisted reading progression and heatmap', (
     tester,
   ) async {

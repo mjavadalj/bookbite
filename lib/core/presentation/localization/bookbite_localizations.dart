@@ -15,7 +15,7 @@ class BookBiteLocalizations {
   String _t(String english, String persian) => isPersian ? persian : english;
 
   String get readingSession => _t('Reading Session', 'نشست مطالعه');
-  String get sessionNavigation => _t('Reading Session', 'نشست مطالعه');
+  String get sessionNavigation => _t('Read', 'خواندن');
   String get library => _t('Library', 'کتابخانه');
   String get discover => _t('Discover', 'کاوش');
   String get journey => _t('Journey', 'مسیر');
@@ -39,8 +39,10 @@ class BookBiteLocalizations {
     'Build a calm personal library and keep every reading session connected to the books that matter.',
     'یک کتابخانه شخصی آرام بسازید و هر نشست مطالعه را به کتاب‌های مهم خود پیوند دهید.',
   );
-  String get onboardingCaptureTitle =>
-      _t('Capture without losing your place', 'بدون گم‌کردن جای مطالعه ثبت کنید');
+  String get onboardingCaptureTitle => _t(
+    'Capture without losing your place',
+    'بدون گم‌کردن جای مطالعه ثبت کنید',
+  );
   String get onboardingCaptureBody => _t(
     'Photograph a page or record a five-second thought. BookBite extracts editable text while you keep reading.',
     'از یک صفحه عکس بگیرید یا یک فکر پنج‌ثانیه‌ای ضبط کنید. بوک‌بایت متن قابل ویرایش را هنگام ادامه مطالعه استخراج می‌کند.',
@@ -120,6 +122,16 @@ class BookBiteLocalizations {
     'Choose a book from your library to begin.',
     'برای شروع، کتابی از کتابخانه انتخاب کنید.',
   );
+  String get startSessionTitle => _t('Start a Session', 'شروع نشست');
+  String get chooseBookToBegin =>
+      _t('Choose a book to begin', 'برای شروع کتابی انتخاب کنید');
+  String get continueReading => _t('Continue Reading', 'ادامه مطالعه');
+  String get notStarted => _t('Not started', 'شروع نشده');
+  String startedDaysAgo(int days) => days == 0
+      ? _t('Started today', 'امروز شروع شد')
+      : _t('Started ${days}d ago', '$days روز پیش شروع شد');
+  String readingMinutes(int minutes) =>
+      _t('$minutes min read', '$minutes دقیقه مطالعه');
   String get searchLibrary => _t('Search your library', 'جست‌وجوی کتابخانه');
   String get yourLibrary => _t('Your library', 'کتابخانه شما');
   String get confirmBook =>

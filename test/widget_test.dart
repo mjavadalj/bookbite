@@ -11,6 +11,7 @@ void main() {
 
     expect(find.text('Discover'), findsWidgets);
     expect(find.text('Search title, author, or ISBN'), findsOneWidget);
+    expect(find.text('Read'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
   });

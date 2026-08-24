@@ -70,11 +70,13 @@ class PersonalBookSummary {
     required this.title,
     required this.createdAt,
     this.author,
+    this.coverUrl,
   });
 
   final String id;
   final String title;
   final String? author;
+  final Uri? coverUrl;
   final DateTime createdAt;
 }
 

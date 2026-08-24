@@ -104,14 +104,16 @@ class DriftPersonalBookRepository
       ..orderBy([(entry) => OrderingTerm.desc(entry.createdAt)]);
     return query.watch().map(
       (rows) => rows
-          .map(
-            (row) => domain.PersonalBookSummary(
+          .map((row) {
+            final snapshot = _snapshotFromJson(row.snapshotJson);
+            return domain.PersonalBookSummary(
               id: row.id,
               title: row.title,
               author: _strings(row.authorsJson).firstOrNull,
+              coverUrl: snapshot.coverUrl,
               createdAt: _date(row.createdAt),
-            ),
-          )
+            );
+          })
           .toList(growable: false),
     );
   }
