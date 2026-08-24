@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bookbite/app/navigation/app_router.dart';
 import 'package:bookbite/app/theme/bookbite_theme.dart';
 import 'package:bookbite/core/presentation/localization/bookbite_localizations.dart';
@@ -5,6 +7,7 @@ import 'package:bookbite/features/onboarding/data/file_onboarding_store.dart';
 import 'package:bookbite/features/onboarding/domain/onboarding_store.dart';
 import 'package:bookbite/features/onboarding/presentation/bookbite_launch_page.dart';
 import 'package:bookbite/features/onboarding/presentation/onboarding_page.dart';
+import 'package:bookbite/features/discover/application/discover_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -25,11 +28,13 @@ class BookBiteApp extends ConsumerStatefulWidget {
   const BookBiteApp({
     this.onboardingStore,
     this.initializeApp,
+    this.preloadDiscover,
     super.key,
   });
 
   final OnboardingStore? onboardingStore;
   final Future<void> Function()? initializeApp;
+  final Future<void> Function(String language)? preloadDiscover;
 
   @override
   ConsumerState<BookBiteApp> createState() => _BookBiteAppState();
@@ -58,6 +63,14 @@ class _BookBiteAppState extends ConsumerState<BookBiteApp> {
     } else {
       await dotenv.load(fileName: '.env');
     }
+    final language = ref.read(appLocaleProvider).languageCode;
+    final preload = widget.preloadDiscover;
+    unawaited(
+      preload?.call(language) ??
+          ref
+              .read(discoverControllerProvider.notifier)
+              .ensureRootLoaded(language),
+    );
     return _onboardingStore.isComplete();
   }
 
@@ -74,7 +87,11 @@ class _BookBiteAppState extends ConsumerState<BookBiteApp> {
     final current = ref.read(appLocaleProvider);
     ref
         .read(appLocaleProvider.notifier)
-        .setLocale(current.languageCode == 'fa' ? const Locale('en') : const Locale('fa'));
+        .setLocale(
+          current.languageCode == 'fa'
+              ? const Locale('en')
+              : const Locale('fa'),
+        );
   }
 
   @override
@@ -92,10 +109,7 @@ class _BookBiteAppState extends ConsumerState<BookBiteApp> {
         if (snapshot.hasError) {
           return _bootstrapApp(
             locale: locale,
-            home: BookBiteLaunchPage(
-              error: true,
-              onRetry: _retryBootstrap,
-            ),
+            home: BookBiteLaunchPage(error: true, onRetry: _retryBootstrap),
           );
         }
         final completed = _onboardingComplete ?? snapshot.data ?? false;

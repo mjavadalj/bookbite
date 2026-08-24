@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('launches at the Reading Session root', (tester) async {
+  testWidgets('launches at the Discover root', (tester) async {
     await tester.pumpWidget(_completedApp());
     await _pumpUi(tester);
 
-    expect(find.text('Ready to read?'), findsOneWidget);
-    expect(find.text('Reading Session'), findsWidgets);
+    expect(find.text('Discover'), findsWidgets);
+    expect(find.text('Search title, author, or ISBN'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(milliseconds: 1));
   });
@@ -41,14 +41,16 @@ Widget _completedApp() => ProviderScope(
   child: BookBiteApp(
     onboardingStore: _CompletedOnboardingStore(),
     initializeApp: _initialize,
+    preloadDiscover: _skipPreload,
   ),
 );
 
 Future<void> _initialize() async {}
+Future<void> _skipPreload(String _) async {}
 
 Future<void> _pumpUi(WidgetTester tester) async {
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pump(const Duration(seconds: 3));
 }
 
 class _CompletedOnboardingStore implements OnboardingStore {

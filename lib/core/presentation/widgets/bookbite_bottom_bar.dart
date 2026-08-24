@@ -57,17 +57,17 @@ class BookBiteBottomBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (showCaptureActions) ...[
-              const SizedBox(height: BookBiteTokens.space1),
+              const SizedBox(height: 4),
               _CaptureActions(
                 strings: strings,
                 onPhotoCapture: onPhotoCapture,
                 onVoiceCapture: onVoiceCapture,
               ),
-              const SizedBox(height: BookBiteTokens.space1),
+              const SizedBox(height: 4),
             ],
             const Divider(height: 1, color: BookBiteTokens.border),
             SizedBox(
-              height: 82,
+              height: 60,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -105,8 +105,8 @@ class _CaptureActions extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 640),
       child: Container(
-        height: 52,
-        margin: const EdgeInsets.symmetric(horizontal: 32),
+        height: 48,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: BookBiteTokens.surface,
           border: Border.all(color: BookBiteTokens.border),
@@ -163,11 +163,11 @@ class _CaptureAction extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 27, color: BookBiteTokens.primary),
+              Icon(icon, size: 22, color: BookBiteTokens.primary),
               const SizedBox(width: BookBiteTokens.space1),
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: BookBiteTokens.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -217,8 +217,8 @@ class _NavigationItem extends StatelessWidget {
                   duration: reduceMotion
                       ? Duration.zero
                       : const Duration(milliseconds: 180),
-                  width: 38,
-                  height: 38,
+                  width: 30,
+                  height: 30,
                   decoration: BoxDecoration(
                     color: selected
                         ? BookBiteTokens.primary
@@ -227,20 +227,20 @@ class _NavigationItem extends StatelessWidget {
                   ),
                   child: Icon(
                     selected ? destination.selectedIcon : destination.icon,
-                    size: 26,
+                    size: 22,
                     color: selected
                         ? BookBiteTokens.surface
                         : BookBiteTokens.navigationIcon,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   destination.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: labelColor,
-                    fontSize: 11,
+                    fontSize: 10.5,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

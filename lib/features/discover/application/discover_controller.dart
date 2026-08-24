@@ -15,7 +15,9 @@ part 'discover_controller.g.dart';
 CatalogRepository catalogRepository(Ref ref) {
   return OpenLibraryCatalogRepository(
     client: DartCatalogHttpClient(),
-    contact: dotenv.env['OPEN_LIBRARY_CONTACT'] ?? '',
+    contact: dotenv.isInitialized
+        ? dotenv.env['OPEN_LIBRARY_CONTACT'] ?? ''
+        : '',
   );
 }
 
@@ -110,6 +112,8 @@ class DiscoverController extends _$DiscoverController {
   int _searchGeneration = 0;
   bool _loadingBrowseMore = false;
   bool _loadingSearchMore = false;
+  Future<void>? _rootLoad;
+  String? _rootLanguage;
 
   @override
   DiscoverState build() {
@@ -120,8 +124,29 @@ class DiscoverController extends _$DiscoverController {
   }
 
   Future<void> loadRoot(String language) async {
+    final activeLoad = _rootLoad;
+    if (_rootLanguage == language && activeLoad != null) {
+      return activeLoad;
+    }
+    _rootLanguage = language;
     _language = language;
-    await Future.wait([_loadWeekly(), _loadBrowse()]);
+    final load = Future.wait([_loadWeekly(), _loadBrowse()]);
+    _rootLoad = load;
+    try {
+      await load;
+    } finally {
+      if (identical(_rootLoad, load)) _rootLoad = null;
+    }
+  }
+
+  Future<void> ensureRootLoaded(String language) {
+    final activeLoad = _rootLoad;
+    if (_rootLanguage == language &&
+        (state.weekly.status != CatalogStatus.initial ||
+            state.browse.status != CatalogStatus.initial)) {
+      return activeLoad ?? Future<void>.value();
+    }
+    return loadRoot(language);
   }
 
   void setLanguage(String language) => _language = language;
@@ -291,7 +316,7 @@ class DiscoverController extends _$DiscoverController {
       state = state.copyWith(
         search: cachedBooks.isNotEmpty
             ? CatalogSection(
-                books: cachedBooks,
+                books: _unique(cachedBooks),
                 status: CatalogStatus.populated,
                 source: CatalogSource.offlineCache,
               )
@@ -315,14 +340,19 @@ class DiscoverController extends _$DiscoverController {
     CatalogPage page,
     List<CatalogBook> books, {
     bool offline = false,
-  }) => CatalogSection(
-    books: books,
-    status: books.isEmpty ? CatalogStatus.empty : CatalogStatus.populated,
-    hasMore: page.hasMore && !offline,
-    nextOffset: page.nextOffset ?? 0,
-    source: offline ? CatalogSource.offlineCache : page.source,
-    total: page.total,
-  );
+  }) {
+    final displayableBooks = _unique(books);
+    return CatalogSection(
+      books: displayableBooks,
+      status: displayableBooks.isEmpty
+          ? CatalogStatus.empty
+          : CatalogStatus.populated,
+      hasMore: page.hasMore && !offline,
+      nextOffset: page.nextOffset ?? 0,
+      source: offline ? CatalogSource.offlineCache : page.source,
+      total: page.total,
+    );
+  }
 
   CatalogSection _failedSection(
     CatalogSection existing,
@@ -344,7 +374,12 @@ class DiscoverController extends _$DiscoverController {
   List<CatalogBook> _unique(Iterable<CatalogBook> books) {
     final seen = <String>{};
     return books
-        .where((book) => seen.add(book.identity))
+        .where(
+          (book) =>
+              book.coverUrl != null &&
+              book.authors.isNotEmpty &&
+              seen.add(book.identity),
+        )
         .toList(growable: false);
   }
 }

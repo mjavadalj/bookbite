@@ -16,6 +16,7 @@ void main() {
         child: BookBiteApp(
           onboardingStore: _MemoryOnboardingStore(completed: false),
           initializeApp: () => initialization.future,
+          preloadDiscover: _skipPreload,
         ),
       ),
     );
@@ -36,6 +37,57 @@ void main() {
     await _dispose(tester);
   });
 
+  testWidgets('launch progress finishes before the three-second handoff', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        child: BookBiteApp(
+          onboardingStore: _MemoryOnboardingStore(completed: false),
+          initializeApp: _initialize,
+          preloadDiscover: _skipPreload,
+        ),
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 2600));
+    final progress = tester.widget<FractionallySizedBox>(
+      find.descendant(
+        of: find.byKey(const ValueKey('bookbite-launch-progress')),
+        matching: find.byType(FractionallySizedBox),
+      ),
+    );
+    expect(progress.widthFactor, 1);
+    expect(find.text('BookBite'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 400));
+    await _pumpUi(tester);
+    expect(find.text('Your reading life, together'), findsOneWidget);
+    await _dispose(tester);
+  });
+
+  testWidgets('starts Discover preloading while the splash is visible', (
+    tester,
+  ) async {
+    final preloadStarted = Completer<void>();
+    await tester.pumpWidget(
+      ProviderScope(
+        child: BookBiteApp(
+          onboardingStore: _MemoryOnboardingStore(completed: true),
+          initializeApp: _initialize,
+          preloadDiscover: (_) async => preloadStarted.complete(),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(preloadStarted.isCompleted, isTrue);
+    expect(find.text('BookBite'), findsOneWidget);
+    expect(find.text('Discover'), findsNothing);
+    await tester.pump(const Duration(seconds: 3));
+    await _dispose(tester);
+  });
+
   testWidgets('first run completes all onboarding pages and persists it', (
     tester,
   ) async {
@@ -45,6 +97,7 @@ void main() {
         child: BookBiteApp(
           onboardingStore: store,
           initializeApp: _initialize,
+          preloadDiscover: _skipPreload,
         ),
       ),
     );
@@ -62,7 +115,7 @@ void main() {
 
     expect(store.completed, isTrue);
     expect(store.markCompleteCalls, 1);
-    expect(find.text('Ready to read?'), findsOneWidget);
+    expect(find.text('Discover'), findsWidgets);
     await _dispose(tester);
   });
 
@@ -73,12 +126,13 @@ void main() {
         child: BookBiteApp(
           onboardingStore: store,
           initializeApp: _initialize,
+          preloadDiscover: _skipPreload,
         ),
       ),
     );
     await _pumpUi(tester);
 
-    expect(find.text('Ready to read?'), findsOneWidget);
+    expect(find.text('Discover'), findsWidgets);
     expect(find.text('Your reading life, together'), findsNothing);
     await _dispose(tester);
   });
@@ -89,6 +143,7 @@ void main() {
         child: BookBiteApp(
           onboardingStore: _MemoryOnboardingStore(completed: false),
           initializeApp: _initialize,
+          preloadDiscover: _skipPreload,
         ),
       ),
     );
@@ -114,6 +169,7 @@ void main() {
           child: BookBiteApp(
             onboardingStore: _MemoryOnboardingStore(completed: false),
             initializeApp: _initialize,
+            preloadDiscover: _skipPreload,
           ),
         ),
       ),
@@ -128,6 +184,7 @@ void main() {
 }
 
 Future<void> _initialize() async {}
+Future<void> _skipPreload(String _) async {}
 
 Future<void> _pumpUi(WidgetTester tester) async {
   await tester.pump();

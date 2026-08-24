@@ -15,7 +15,11 @@ class _BookBiteLaunchPageState extends State<BookBiteLaunchPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _progressController = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 3),
+    duration: const Duration(milliseconds: 2600),
+  );
+  late final Animation<double> _progress = CurvedAnimation(
+    parent: _progressController,
+    curve: Curves.easeOutCubic,
   );
 
   @override
@@ -62,10 +66,9 @@ class _BookBiteLaunchPageState extends State<BookBiteLaunchPage>
                 ),
                 if (!widget.error)
                   AnimatedBuilder(
-                    animation: _progressController,
-                    builder: (context, child) => _LaunchProgressBar(
-                      progress: .58 * _progressController.value,
-                    ),
+                    animation: _progress,
+                    builder: (context, child) =>
+                        _LaunchProgressBar(progress: _progress.value),
                   ),
               ],
             ),

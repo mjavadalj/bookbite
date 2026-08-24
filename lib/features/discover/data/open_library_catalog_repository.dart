@@ -304,23 +304,23 @@ class OpenLibraryCatalogRepository implements CatalogRepository {
       final title = _text(item['title']);
       if (id.isEmpty || title == null || title.isEmpty) continue;
       final coverId = item['cover_i'];
+      final authors = _texts(item['author_name']);
+      if (coverId is! num || coverId.toInt() <= 0 || authors.isEmpty) continue;
       yield CatalogBook(
         provider: 'openLibrary',
         id: id,
         workId: workKey,
         title: title,
-        authors: _texts(item['author_name']),
+        authors: authors,
         language: _texts(item['language']).firstOrNull,
         firstPublishedYear: item['first_publish_year'] is num
             ? (item['first_publish_year'] as num).toInt()
             : null,
         isbns: _texts(item['isbn']).take(3).toList(growable: false),
-        coverUrl: coverId is num
-            ? Uri.https(
-                'covers.openlibrary.org',
-                '/b/id/${coverId.toInt()}-M.jpg',
-              )
-            : null,
+        coverUrl: Uri.https(
+          'covers.openlibrary.org',
+          '/b/id/${coverId.toInt()}-M.jpg',
+        ),
       );
     }
   }

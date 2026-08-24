@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 part 'app_router.g.dart';
 
 final appRouter = GoRouter(
-  initialLocation: const ReadingSessionRoute().location,
+  initialLocation: const DiscoverRoute().location,
   restorationScopeId: 'bookbite_router',
   routes: $appRoutes,
 );

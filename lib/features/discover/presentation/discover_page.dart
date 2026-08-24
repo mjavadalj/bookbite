@@ -49,7 +49,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
     if (_loadedLanguage != language) {
       _loadedLanguage = language;
       Future<void>.microtask(
-        () => ref.read(discoverControllerProvider.notifier).loadRoot(language),
+        () => ref
+            .read(discoverControllerProvider.notifier)
+            .ensureRootLoaded(language),
       );
     }
   }
@@ -90,7 +92,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
         restorationId: 'discover_scroll',
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,15 +101,19 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
                     header: true,
                     child: Text(
                       strings.discover,
-                      style: textTheme.headlineMedium,
+                      style: textTheme.headlineMedium?.copyWith(
+                        fontFamily: 'serif',
+                        fontSize: 32,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 14),
                   _SearchLauncher(
                     onPressed: () =>
                         const ActiveSearchRoute().push<void>(context),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   _CategoryRail(controller: _railController),
                 ],
               ),
@@ -115,7 +121,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
           ),
           _WeeklyShelf(section: state.weekly, onRetry: controller.loadRoot),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             sliver: SliverToBoxAdapter(
               child: Row(
                 children: [
@@ -124,7 +130,10 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage>
                       header: true,
                       child: Text(
                         strings.browseCatalog,
-                        style: textTheme.titleLarge,
+                        style: textTheme.titleLarge?.copyWith(
+                          fontFamily: 'serif',
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -175,8 +184,8 @@ class _SearchLauncher extends StatelessWidget {
           onTap: onPressed,
           borderRadius: BorderRadius.circular(BookBiteTokens.surfaceRadius),
           child: Container(
-            constraints: const BoxConstraints(minHeight: 64),
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            constraints: const BoxConstraints(minHeight: 52),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
               border: Border.all(color: BookBiteTokens.border),
               borderRadius: BorderRadius.circular(BookBiteTokens.surfaceRadius),
@@ -185,10 +194,10 @@ class _SearchLauncher extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.search_rounded,
-                  size: 28,
+                  size: 24,
                   color: BookBiteTokens.secondaryText,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     strings.searchCatalog,
@@ -222,7 +231,7 @@ class _CategoryRail extends StatelessWidget {
       (strings.selfHelp, false),
     ];
     return SizedBox(
-      height: 48,
+      height: 44,
       child: ListView.separated(
         controller: controller,
         scrollDirection: Axis.horizontal,
@@ -236,7 +245,7 @@ class _CategoryRail extends StatelessWidget {
             label: selected ? label : '$label, ${strings.categoriesComingSoon}',
             child: Material(
               color: selected ? BookBiteTokens.primary : BookBiteTokens.surface,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(22),
               child: InkWell(
                 onTap: selected
                     ? null
@@ -244,19 +253,19 @@ class _CategoryRail extends StatelessWidget {
                         context,
                         strings.categoriesComingSoon,
                       ),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(22),
                 child: Container(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     border: selected
                         ? null
                         : Border.all(color: BookBiteTokens.border),
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(22),
                   ),
                   child: Text(
                     label,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: selected
                           ? BookBiteTokens.surface
                           : BookBiteTokens.foreground,
@@ -291,16 +300,19 @@ class _WeeklyShelf extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Semantics(
                 header: true,
                 child: Text(
                   strings.exploreThisWeek,
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontFamily: 'serif',
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             if (section.status == CatalogStatus.loading)
               const SizedBox(
                 height: 260,
@@ -314,16 +326,16 @@ class _WeeklyShelf extends StatelessWidget {
               )
             else
               SizedBox(
-                height: 282,
+                height: _weeklyShelfHeight(context),
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: section.books.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 16),
+                  separatorBuilder: (_, _) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final book = section.books[index];
                     return SizedBox(
-                      width: 166,
+                      width: 124,
                       child: _BookTile(
                         book: book,
                         onTap: () => _openCatalog(context, book, 'weekly'),
@@ -370,13 +382,18 @@ class _BrowseGrid extends StatelessWidget {
       );
     }
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       sliver: SliverLayoutBuilder(
         builder: (context, constraints) {
-          final textScale = MediaQuery.textScalerOf(context).scale(1);
-          final columns = textScale > 1.35
-              ? 2
-              : (constraints.crossAxisExtent / 128).floor().clamp(2, 5);
+          final textScale = MediaQuery.textScalerOf(
+            context,
+          ).scale(1).clamp(1.0, 2.0);
+          final columns = constraints.crossAxisExtent >= 720
+              ? (constraints.crossAxisExtent / 132).floor().clamp(4, 6)
+              : 3;
+          const spacing = 12.0;
+          final tileWidth =
+              (constraints.crossAxisExtent - spacing * (columns - 1)) / columns;
           return SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (context, index) => _BookTile(
@@ -387,9 +404,9 @@ class _BrowseGrid extends StatelessWidget {
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.48,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: spacing,
+              mainAxisExtent: tileWidth * 1.5 + 62 * textScale,
             ),
           );
         },
@@ -405,9 +422,7 @@ class _BookTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = BookBiteLocalizations.of(context);
-    final authors = book.authors.isEmpty
-        ? strings.authorUnavailable
-        : book.authors.join(', ');
+    final authors = book.authors.join(', ');
     return Semantics(
       button: true,
       label: '${book.title}, $authors, ${strings.catalogResults}',
@@ -419,17 +434,20 @@ class _BookTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _Cover(book: book)),
-              const SizedBox(height: 8),
+              _Cover(book: book),
+              const SizedBox(height: 6),
               Directionality(
                 textDirection: _contentDirection(book.title),
                 child: Text(
                   book.title,
-                  maxLines: 3,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: BookBiteTokens.foreground,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    height: 1.25,
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
@@ -437,9 +455,11 @@ class _BookTile extends StatelessWidget {
                 textDirection: _contentDirection(authors),
                 child: Text(
                   authors,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 13, height: 1.25),
                 ),
               ),
             ],
@@ -607,3 +627,8 @@ TextDirection _contentDirection(String text) =>
     RegExp(r'[\u0600-\u06FF]').hasMatch(text)
     ? TextDirection.rtl
     : TextDirection.ltr;
+
+double _weeklyShelfHeight(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0);
+  return 186 + 62 * textScale;
+}
