@@ -6,7 +6,7 @@ skills*
 .pub-cache/
 .fvm/
 .env
-
+docs/design
 # Flutter build output and generated tooling
 build/
 .flutter-plugins
