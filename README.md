@@ -2,6 +2,13 @@
 
 BookBite is a calm, private, offline-first companion for readers of physical books.
 
+<p align="center">
+  <img src="screenshots/01-discover-browse.png" width="230" alt="Home Screen" />
+  &nbsp;&nbsp;
+  <img src="screenshots/01-discover-browse copy.png" width="230" alt="Easy Mode" />
+</p>
+
+
 ## Open Library configuration
 
 Discover uses the Open Library API only after a human reader starts a browse or
